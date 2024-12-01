@@ -4,3 +4,7 @@
 ## Haskell
 
 [Criterion](aoc2024-bench.html)
+
+## Kotlin
+
+[kotlinx.benchmark](jmh-visualizer/index.html)

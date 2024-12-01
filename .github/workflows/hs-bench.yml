@@ -1,0 +1,61 @@
+name: Haskell benchmarks
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  get-inputs:
+    uses: ephemient/aoc2024/.github/workflows/get-inputs.yml@main
+    secrets:
+      SESSION: ${{ secrets.SESSION }}
+
+  build:
+    needs: [ get-inputs ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-docs
+          path: gh-docs
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: haskell-actions/setup@v2
+        id: setup
+        with:
+          ghc-version: 9.10.1
+      - run: |
+          cabal configure --enable-tests --enable-benchmarks
+          cabal build all --dry-run
+        working-directory: hs
+      - uses: actions/cache/restore@v4
+        id: cache
+        env:
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-cabal-${{ steps.setup.outputs.cabal-version }}
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ env.key }}-plan-${{ hashFiles('hs/dist-newstyle/cache/plan.json') }}
+          restore-keys: ${{ env.key }}-
+      - run: cabal build all --only-dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        working-directory: hs
+      - uses: actions/cache/save@v4
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: ${{ steps.setup.outputs.cabal-store }}
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+      - run: cabal bench bench:aoc2024-bench --benchmark-options='-o ${{ github.workspace }}/gh-docs/aoc2024-bench.html'
+        env:
+          AOC2024_DATADIR: ${{ github.workspace }}/inputs
+        working-directory: hs
+      - uses: EndBug/add-and-commit@v9
+        with:
+          cwd: gh-docs
+          add: aoc2024-bench.html
+          message: 'Haskell Criterion ${{ github.sha }}'

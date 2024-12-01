@@ -26,3 +26,25 @@ Run all checks, including [Detekt](https://detekt.github.io/) static code analys
 ```sh
 ./gradlew check
 ```
+
+## [GraalVM](https://www.graalvm.org/)
+
+Run the test suite as a GraalVM Native Image:
+
+```sh
+export GRAALVM_HOME=...
+./gradlew --no-configuration-cache :graalvm:nativeTest
+```
+
+Run [JMH](https://openjdk.java.net/projects/code-tools/jmh/) benchmarks as a GraalVM Native Image:
+
+```sh
+export GRAALVM_HOME=...
+./gradlew --no-configuration-cache -Pagent :graalvm:nativeBenchmarkRun
+```
+
+Print solutions for the inputs provided in local data files as a GraalVM Native Image:
+
+```sh
+./gradlew --no-configuration-cache :graalvm:nativeRun
+```

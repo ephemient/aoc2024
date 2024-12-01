@@ -5,6 +5,20 @@ plugins {
 
 kotlin {
     jvm()
+    wasmJs {
+        browser()
+        nodejs()
+    }
+    wasmWasi { nodejs() }
+    js {
+        browser()
+        nodejs()
+    }
+    linuxArm64()
+    linuxX64()
+    macosArm64()
+    macosX64()
+    mingwX64()
 
     sourceSets {
         commonMain {

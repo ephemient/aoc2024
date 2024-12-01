@@ -9,10 +9,16 @@ Run the test suite:
 ./gradlew :aoc2024-lib:allTests
 ```
 
+Run [kotlinx.benchmark](https://github.com/Kotlin/kotlinx-benchmark) ([JMH](https://openjdk.java.net/projects/code-tools/jmh/)) benchmarks:
+
+```sh
+./gradlew :aoc2024-exe:benchmark
+```
+
 Print solutions for the inputs provided in local data files:
 
 ```sh
-./gradlew :aoc2024-exe:jvmRun
+./gradlew :aoc2024-exe:jvmRun :aoc2024-exe:runReleaseExecutable{LinuxX64,Macos{X64,Arm64}} :aoc2024-exe:jsNodeProductionRun
 ```
 
 Run all checks, including [Detekt](https://detekt.github.io/) static code analysis:

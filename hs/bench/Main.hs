@@ -6,6 +6,7 @@ import Data.Foldable (find)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO (readFile)
+import qualified Day1 (part1, part2)
 import System.Environment.Blank (getEnv, setEnv, unsetEnv)
 import System.FilePath (combine)
 
@@ -22,5 +23,8 @@ getDayInput i = do
 
 main :: IO ()
 main = defaultMain
-  [
+  [ env (getDayInput 1) $ \input -> bgroup "Day 1"
+      [ bench "part 1" $ nf Day1.part1 input
+      , bench "part 2" $ nf Day1.part2 input
+      ]
   ]

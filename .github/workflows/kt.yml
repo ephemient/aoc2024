@@ -17,23 +17,85 @@ jobs:
       SESSION: ${{ secrets.SESSION }}
 
   build:
-    needs: [ get-inputs ]
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: inputs
-          path: inputs
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - run: ./gradlew check
+      - run: ./gradlew build distZip
         working-directory: kt
-      - run: ./gradlew :aoc2024-exe:jvmRun
-        working-directory: kt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aoc2024-exe
+          path: kt/aoc2024-exe/build/distributions/*.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aoc2024-kexe
+          path: |
+            kt/aoc2024-exe/build/bin/*/debugExecutable/*.kexe
+            kt/aoc2024-exe/build/bin/*/releaseExecutable/*.kexe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aoc2024-js
+          path: kt/build/js/packages/aoc2024-aoc2024-exe/kotlin/*
+
+  run-jvm:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-exe
+      - run: unzip aoc2024-exe.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: aoc2024-exe/bin/aoc2024-exe
         env:
-          AOC2024_DATADIR: ${{ github.workspace }}/inputs
+          AOC2024_DATADIR: inputs
+
+  run-native:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-kexe
+      - run: chmod +x linuxX64/*/aoc2024-exe.kexe
+      - run: linuxX64/releaseExecutable/aoc2024-exe.kexe
+        env:
+          AOC2024_DATADIR: inputs
+
+  run-node:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.0.0
+      - run: node aoc2024-aoc2024-exe.js
+        env:
+          AOC2024_DATADIR: inputs

@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "aoc2024"
+version = "0.1.0"
+description = ""
+authors = ["Daniel Lin <ephemient@gmail.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+repository = "https://github.com/ephemient/aoc2024/tree/main/py"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+natsort = "^8.4.0"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.8.1"
+pytest = "^8.3.4"
+pytest-benchmark = { version = "^5.1.0", extras = ["histogram"] }
+
+[tool.pytest.ini_options]
+addopts = '--doctest-modules --benchmark-disable --benchmark-sort=fullname'
+required_plugins = ['pytest-benchmark']
+
+[tool.poetry.scripts]
+aoc2024 = "aoc2024.main:main"
+
+[tool.poetry.plugins."aoc2024.days"]
+day1 = "aoc2024.day1:parts"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

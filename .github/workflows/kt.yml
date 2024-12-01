@@ -1,0 +1,39 @@
+name: Kotlin CI
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ kt/** ]
+  pull_request:
+    branches: [ main ]
+    paths: [ kt/** ]
+
+  workflow_dispatch:
+
+jobs:
+  get-inputs:
+    uses: ephemient/aoc2024/.github/workflows/get-inputs.yml@main
+    secrets:
+      SESSION: ${{ secrets.SESSION }}
+
+  build:
+    needs: [ get-inputs ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew check
+        working-directory: kt
+      - run: ./gradlew :aoc2024-exe:jvmRun
+        working-directory: kt
+        env:
+          AOC2024_DATADIR: ${{ github.workspace }}/inputs

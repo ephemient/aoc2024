@@ -9,7 +9,6 @@ import Data.Function (on)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO (putStrLn, readFile)
-import Text.Megaparsec (errorBundlePretty)
 import System.Environment (getArgs, lookupEnv)
 import System.FilePath (combine)
 
@@ -32,4 +31,4 @@ run' day name showIO funcs = do
 
 main :: IO ()
 main = do
-    run 1 print [Day1.part1, Day1.part2]
+    run 1 (either fail print) [Day1.part1, Day1.part2]

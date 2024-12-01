@@ -19,12 +19,15 @@ source-repository head
     subdir:   hs
 
 library
+    hs-source-dirs:   src
+    exposed-modules:
+        Day1
     other-modules:
         Common
     build-depends:
         base ^>=4.20.0.0,
-        text ^>=2.1.1 
-    hs-source-dirs:   src
+        containers ^>=0.7,
+        text ^>=2.1.1
     ghc-options: -Wall
     default-language: GHC2024
 
@@ -45,6 +48,8 @@ test-suite aoc2024-test
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Main.hs
+    other-modules:
+        Day1Spec
     build-depends:
         aoc2024,
         base ^>=4.20.0.0,

@@ -1,6 +1,8 @@
 {-# LANGUAGE NondecreasingIndentation #-}
 module Main (main) where
 
+import qualified Day1 (part1, part2)
+
 import Control.Monad (ap, when)
 import Data.Foldable (find)
 import Data.Function (on)
@@ -30,4 +32,4 @@ run' day name showIO funcs = do
 
 main :: IO ()
 main = do
-    pure ()
+    run 1 print [Day1.part1, Day1.part2]

@@ -1,0 +1,35 @@
+[package]
+name = "aoc2024"
+description = "Advent of Code 2024 - my answers"
+version = "0.1.0"
+authors = ["Daniel Lin <ephemient@gmail.com>"]
+license = "BSD-3-Clause"
+edition = "2021"
+readme = "README.md"
+homepage = "https://github.com/ephemient/aoc2024/tree/main/rs"
+
+[lib]
+name = "aoc2024"
+path = "src/lib.rs"
+
+[[bin]]
+name = "aoc2024"
+path = "src/main.rs"
+
+[dependencies]
+itertools = "0.13"
+
+[dev-dependencies]
+criterion = "0.5.1"
+indoc = "2"
+pretty_assertions = "1.4.1"
+
+[[bench]]
+name = "criterion"
+harness = false
+
+[profile.dev]
+opt-level = 1
+
+[profile.test]
+opt-level = 3

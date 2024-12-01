@@ -1,0 +1,50 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ rs/** ]
+  pull_request:
+    branches: [ main ]
+    paths: [ rs/** ]
+
+  workflow_dispatch:
+
+jobs:
+  get-inputs:
+    uses: ephemient/aoc2024/.github/workflows/get-inputs.yml@main
+    secrets:
+      SESSION: ${{ secrets.SESSION }}
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy,rustfmt
+          cache-workspaces: rs -> target
+      - run: cargo fmt -- --check
+        working-directory: rs
+      - run: cargo clippy -- --deny warnings
+        working-directory: rs
+      - run: cargo test
+        working-directory: rs
+      - run: cargo build --all-features --all-targets --release
+        working-directory: rs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aoc2024-rs
+          path: rs/target/release/aoc2024
+
+  run:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+      - run: chmod +x aoc2024-rs/aoc2024
+      - run: aoc2024-rs/aoc2024
+        env:
+          AOC2024_DATADIR: inputs

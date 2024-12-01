@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [ jvm, js, linuxX64 ]
+        target: [ jvm, linuxX64 ]
 
     steps:
       - uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
-      - run: ./gradlew ${{ matrix.target }}Benchmark
+      - run: ./gradlew ${{ matrix.target }}BenchBenchmark
         working-directory: kt
         env:
           AOC2024_DATADIR: ${{ github.workspace }}/inputs
@@ -91,10 +91,6 @@ jobs:
           path: benchmarks
       - uses: actions/download-artifact@v4
         with:
-          name: js-benchmarks
-          path: benchmarks
-      - uses: actions/download-artifact@v4
-        with:
           name: linuxX64-benchmarks
           path: benchmarks
       - run: rm -rf jmh-visualizer
@@ -106,6 +102,7 @@ jobs:
           for file in benchmarks/main/*/*.json; do
             name=${file##*/}
             name=${name%.*}
+            name=${name%Bench}
             names+=("$name")
             jsonargs+=(--slurpfile "$name" "$file")
           done

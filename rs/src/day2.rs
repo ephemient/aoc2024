@@ -26,8 +26,7 @@ fn is_safe_2(report: &[i32]) -> bool {
     if report.is_empty() {
         return true;
     }
-    let mut report2 = vec![0; report.len() - 1];
-    report2.copy_from_slice(&report[1..]);
+    let mut report2 = report[1..].to_vec();
     is_safe_1(&report2)
         || (0..report2.len()).any(|i| {
             report2[i] = report[i];

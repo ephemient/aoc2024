@@ -7,6 +7,7 @@ import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import Data.Text.IO qualified as TIO (readFile)
 import Day1 qualified (part1, part2)
+import Day2 qualified (part1, part2)
 import System.Environment.Blank (getEnv, setEnv, unsetEnv)
 import System.FilePath (combine)
 
@@ -29,5 +30,11 @@ main =
           "Day 1"
           [ bench "part 1" $ nf Day1.part1 input,
             bench "part 2" $ nf Day1.part2 input
+          ],
+      env (getDayInput 2) $ \input ->
+        bgroup
+          "Day 2"
+          [ bench "part 1" $ nf Day2.part1 input,
+            bench "part 2" $ nf Day2.part2 input
           ]
     ]

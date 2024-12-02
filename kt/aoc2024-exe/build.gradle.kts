@@ -9,25 +9,24 @@ plugins {
 }
 
 kotlin {
-    jvm {
-        mainRun {
-            mainClass = "com.github.ephemient.aoc2024.exe.Main"
-        }
-        compilations {
-            create("bench") {
-                associateWith(getByName("main"))
+    @Suppress("SpreadOperator")
+    listOf(
+        jvm {
+            mainRun {
+                mainClass = "com.github.ephemient.aoc2024.exe.Main"
+            }
+        },
+        *arrayOf(wasmJs(), js()).onEach {
+            it.nodejs()
+            it.binaries.executable()
+        },
+        *arrayOf(linuxArm64(), linuxX64(), macosArm64(), macosX64(), mingwX64()).onEach {
+            it.binaries.executable {
+                entryPoint("com.github.ephemient.aoc2024.exe.main")
             }
         }
-    }
-    js {
-        nodejs()
-        binaries.executable()
-    }
-    for (target in arrayOf(linuxArm64(), linuxX64(), macosArm64(), macosX64(), mingwX64())) {
-        target.binaries.executable {
-            entryPoint("com.github.ephemient.aoc2024.exe.main")
-        }
-        target.compilations {
+    ).onEach {
+        it.compilations {
             create("bench") {
                 associateWith(getByName("main"))
             }
@@ -39,6 +38,7 @@ kotlin {
         withSourceSetTree(KotlinSourceSetTree("bench"))
         common {
             withJvm()
+            withWasmJs()
             withNative()
         }
     }
@@ -105,6 +105,7 @@ allOpen {
 benchmark {
     targets {
         register("jvmBench")
+        register("wasmJsBench")
         register("linuxArm64Bench")
         register("linuxX64Bench")
         register("macosArm64Bench")

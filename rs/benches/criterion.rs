@@ -1,4 +1,4 @@
-use aoc2024::day1;
+use aoc2024::{day1, day2};
 use criterion::{black_box, Criterion};
 use std::env;
 use std::fs;
@@ -18,6 +18,12 @@ fn aoc2024_bench(c: &mut Criterion) -> io::Result<()> {
     let mut g = c.benchmark_group("day 1");
     g.bench_function("part 1", |b| b.iter(|| day1::part1(black_box(&data))));
     g.bench_function("part 2", |b| b.iter(|| day1::part2(black_box(&data))));
+    g.finish();
+
+    let data = get_day_input(2)?;
+    let mut g = c.benchmark_group("day 2");
+    g.bench_function("part 1", |b| b.iter(|| day2::part1(black_box(&data))));
+    g.bench_function("part 2", |b| b.iter(|| day2::part2(black_box(&data))));
     g.finish();
 
     Ok(())

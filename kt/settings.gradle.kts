@@ -14,4 +14,4 @@ gradle.afterProject {
 }
 
 rootProject.name = "aoc2024"
-include("aoc2024-exe", "aoc2024-lib")
+include("aoc2024-exe", "aoc2024-lib", "graalvm")

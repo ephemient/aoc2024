@@ -4,6 +4,7 @@ junit-jupiter = "5.11.3"
 kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
 kotlinx-coroutines = "1.9.0"
+native-image = "0.10.3"
 okio = "3.9.1"
 
 [plugins]
@@ -11,6 +12,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-plugin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
+native-image = { id = "org.graalvm.buildtools.native", version.ref = "native-image" }
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }

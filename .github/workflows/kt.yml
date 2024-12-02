@@ -47,6 +47,23 @@ jobs:
           name: aoc2024-js
           path: kt/build/js/packages/aoc2024-aoc2024-exe/kotlin/*
 
+  graalvm:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: 21
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew --no-configuration-cache nativeTest nativeCompile
+        working-directory: kt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aoc2024-native
+          path: kt/graalvm/build/native/nativeCompile/*
+
   run-jvm:
     needs: [ get-inputs, build ]
     runs-on: ubuntu-latest
@@ -65,6 +82,23 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: aoc2024-exe/bin/aoc2024-exe
+        env:
+          AOC2024_DATADIR: inputs
+
+  run-graalvm:
+    needs: [ get-inputs, graalvm ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-native
+      - run: chmod +x aoc2024-native
+      - run: ./aoc2024-native
         env:
           AOC2024_DATADIR: inputs
 

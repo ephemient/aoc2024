@@ -9,7 +9,9 @@ kotlin {
         browser()
         nodejs()
     }
-    wasmWasi { nodejs() }
+    wasmWasi {
+        nodejs()
+    }
     js {
         browser()
         nodejs()

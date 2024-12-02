@@ -40,6 +40,10 @@ jobs:
             kt/aoc2024-exe/build/bin/*/releaseExecutable/*.kexe
       - uses: actions/upload-artifact@v4
         with:
+          name: aoc2024-wasmJs
+          path: kt/build/js/packages/aoc2024-aoc2024-exe-wasm-js/kotlin/*
+      - uses: actions/upload-artifact@v4
+        with:
           name: aoc2024-js
           path: kt/build/js/packages/aoc2024-aoc2024-exe/kotlin/*
 
@@ -78,6 +82,25 @@ jobs:
           name: aoc2024-kexe
       - run: chmod +x linuxX64/*/aoc2024-exe.kexe
       - run: linuxX64/releaseExecutable/aoc2024-exe.kexe
+        env:
+          AOC2024_DATADIR: inputs
+
+  run-wasmJs:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-wasmJs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.0.0
+      - run: node aoc2024-aoc2024-exe-wasm-js.mjs
         env:
           AOC2024_DATADIR: inputs
 

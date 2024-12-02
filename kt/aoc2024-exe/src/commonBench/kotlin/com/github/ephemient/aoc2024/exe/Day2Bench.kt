@@ -12,7 +12,7 @@ class Day2Bench {
 
     @Setup
     fun setup() {
-        input = getDayInput(1)
+        input = getDayInput(2)
     }
 
     @Benchmark

@@ -39,7 +39,6 @@ executable aoc2024
         aoc2024,
         base ^>=4.20.0.0,
         filepath ^>=1.5.2.0,
-        megaparsec ^>=9.7.0,
         text ^>=2.1.1
     ghc-options:      -no-hs-main -threaded -Wall
     default-language: GHC2024

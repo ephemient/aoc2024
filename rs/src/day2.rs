@@ -1,30 +1,25 @@
-fn parse(data: &str) -> Vec<Vec<i32>> {
-    data.lines()
-        .flat_map(|line| {
-            line.split_ascii_whitespace()
-                .map(|level| level.parse::<i32>().ok())
-                .collect::<Option<Vec<_>>>()
-        })
-        .collect::<Vec<_>>()
+use std::cmp::Ordering;
+
+fn parse(data: &str) -> impl Iterator<Item = Vec<i32>> + use<'_> {
+    data.lines().flat_map(|line| {
+        line.split_ascii_whitespace()
+            .map(|level| level.parse::<i32>().ok())
+            .collect::<Option<Vec<_>>>()
+    })
 }
 
 fn is_safe_1(report: &[i32]) -> bool {
-    let mut decreasing = false;
-    let mut increasing = false;
     report
         .iter()
         .zip(report.iter().skip(1))
-        .all(|(x, y)| match x - y {
-            -3..=-1 => {
-                decreasing = true;
-                !increasing
+        .try_fold(Ordering::Equal, |cmp, (x, y)| {
+            if x != y && (x - y).abs() <= 3 {
+                Some(x.cmp(y)).filter(|cmp2| cmp != cmp2.reverse())
+            } else {
+                None
             }
-            1..=3 => {
-                increasing = true;
-                !decreasing
-            }
-            _ => false,
         })
+        .is_some()
 }
 
 fn is_safe_2(report: &[i32]) -> bool {
@@ -41,17 +36,11 @@ fn is_safe_2(report: &[i32]) -> bool {
 }
 
 pub fn part1(data: &str) -> usize {
-    parse(data)
-        .into_iter()
-        .filter(|report| is_safe_1(report))
-        .count()
+    parse(data).filter(|report| is_safe_1(report)).count()
 }
 
 pub fn part2(data: &str) -> usize {
-    parse(data)
-        .into_iter()
-        .filter(|report| is_safe_2(report))
-        .count()
+    parse(data).filter(|report| is_safe_2(report)).count()
 }
 
 #[cfg(test)]

@@ -16,24 +16,22 @@ class Day2(input: String) {
         private fun isSafe1(report: IntArray): Boolean {
             var decreasing = false
             var increasing = false
-            for (i in 0..report.size - 2) {
-                when (report[i + 1] - report[i]) {
-                    in -3..-1 -> decreasing = true
-                    in 1..3 -> increasing = true
-                    else -> return false
+            return (0..report.size - 2).all {
+                when (report[it + 1] - report[it]) {
+                    in -3..-1 -> !increasing.also { decreasing = true }
+                    in 1..3 -> !decreasing.also { increasing = true }
+                    else -> false
                 }
             }
-            return !(decreasing && increasing)
         }
 
         private fun isSafe2(report: IntArray): Boolean {
             if (report.isEmpty()) return true
-            val report2 = report.copyOf(report.size - 1)
-            for (i in report2.lastIndex downTo 0) {
-                if (isSafe1(report2)) return true
-                report2[i] = report[i + 1]
+            val report2 = report.copyOfRange(1, report.size)
+            return isSafe1(report2) || report2.indices.any {
+                report2[it] = report[it]
+                isSafe1(report2)
             }
-            return isSafe1(report2)
         }
     }
 }

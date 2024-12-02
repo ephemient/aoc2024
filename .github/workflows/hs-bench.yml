@@ -18,10 +18,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-docs
-          path: gh-docs
       - uses: actions/download-artifact@v4
         with:
           name: inputs
@@ -50,10 +46,15 @@ jobs:
         with:
           path: ${{ steps.setup.outputs.cabal-store }}
           key: ${{ steps.cache.outputs.cache-primary-key }}
-      - run: cabal bench bench:aoc2024-bench --benchmark-options='-o ${{ github.workspace }}/gh-docs/aoc2024-bench.html'
+      - run: cabal bench bench:aoc2024-bench --benchmark-options='-o aoc2024-bench.html'
         env:
           AOC2024_DATADIR: ${{ github.workspace }}/inputs
         working-directory: hs
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-docs
+          path: gh-docs
+      - run: mv hs/aoc2024-bench.html gh-docs/aoc2024-bench.html
       - uses: EndBug/add-and-commit@v9
         with:
           cwd: gh-docs

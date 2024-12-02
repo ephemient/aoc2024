@@ -18,10 +18,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-docs
-          path: gh-docs
       - uses: actions/download-artifact@v4
         with:
           name: inputs
@@ -33,10 +29,15 @@ jobs:
           cache: poetry
       - run: poetry install --no-interaction
         working-directory: py
-      - run: poetry run pytest --benchmark-enable --benchmark-only --benchmark-histogram=${{ github.workspace }}/gh-docs/benchmark
+      - run: poetry run pytest --benchmark-enable --benchmark-only --benchmark-histogram=benchmark
         env:
           AOC2024_DATADIR: ${{ github.workspace }}/inputs
         working-directory: py
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-docs
+          path: gh-docs
+      - run: mv py/benchmark.svg gh-docs/benchmark.svg
       - uses: EndBug/add-and-commit@v9
         with:
           cwd: gh-docs

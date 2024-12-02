@@ -18,10 +18,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
-        with:
-          ref: gh-docs
-          path: gh-docs
       - uses: actions/download-artifact@v4
         with:
           name: inputs
@@ -36,8 +32,11 @@ jobs:
         env:
           AOC2024_DATADIR: ${{ github.workspace }}/inputs
         working-directory: rs
-      - run: rsync --archive --delete --verbose --whole-file target/criterion/reports/ ../gh-docs/criterion/
-        working-directory: rs
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-docs
+          path: gh-docs
+      - run: rsync --archive --delete --verbose --whole-file rs/target/criterion/reports/ gh-docs/criterion/
       - name: Inline Criterion benchmark results
         run: |
           cat >>gh-docs/criterion/index.html <<'EOF'

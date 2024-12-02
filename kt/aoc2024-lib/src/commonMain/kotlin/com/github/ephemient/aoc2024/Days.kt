@@ -2,6 +2,7 @@ package com.github.ephemient.aoc2024
 
 val days: List<Day> = listOf(
     Day(1, ::Day1, Day1::part1, Day1::part2),
+    Day(2, ::Day2, Day2::part1, Day2::part2),
 )
 
 data class Day(

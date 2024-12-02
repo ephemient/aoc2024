@@ -59,6 +59,26 @@ jobs:
           name: aoc2024-hs
           path: ${{ steps.build.outputs.exe }}
 
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: haskell-actions/hlint-setup@v2
+      - uses: haskell-actions/hlint-run@v2
+        with:
+          fail-on: warning
+          path: hs
+      - uses: haskell-actions/run-ormolu@v16
+        with:
+          pattern: |
+            hs/**/*.hs
+            hs/**/*.hs-boot
+      - uses: tfausak/cabal-gild-setup-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: cabal-gild --input hs/aoc2024.cabal --mode check
+
   run:
     needs: [ get-inputs, build ]
     runs-on: ubuntu-latest

@@ -42,3 +42,17 @@ Run [hlint](https://github.com/ndmitchell/hlint) source code suggestions:
 cabal install hlint
 hlint src test bench
 ```
+
+Run [ormolu](https://github.com/tweag/ormolu) formatting:
+
+```sh
+cabal install ormolu
+git ls-files -coz '*.hs' | xargs -0 ormolu --mode inplace
+```
+
+Run [cabal-gild](https://github.com/tfausak/cabal-gild) formatting:
+
+```sh
+cabal install cabal-gild
+cabal-gild -i aoc2024.cabal -o aoc2024.cabal
+```

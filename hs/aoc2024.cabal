@@ -1,74 +1,94 @@
-cabal-version:      3.0
-
-name:               aoc2024
-version:            0.1.0.0
+cabal-version: 3.0
+name: aoc2024
+version: 0.1.0.0
 synopsis:
-    Please see the README on GitHub at <https://github.com/ephemient/aoc2024/blob/main/hs/README.md>
-homepage:           https://github.com/ephemient/aoc2024/tree/main/hs
-license:            BSD-3-Clause
-license-file:       LICENSE
-author:             Daniel Lin
-maintainer:         ephemient@gmail.com
-category:           None
-build-type:         Simple
+  Please see the README on GitHub at <https://github.com/ephemient/aoc2024/blob/main/hs/README.md>
+
+homepage: https://github.com/ephemient/aoc2024/tree/main/hs
+license: BSD-3-Clause
+license-file: LICENSE
+author: Daniel Lin
+maintainer: ephemient@gmail.com
+category: None
+build-type: Simple
 extra-source-files: README.md
 
 source-repository head
-    type:     git
-    location: https://github.com/ephemient/aoc2024.git
-    subdir:   hs
+  type: git
+  location: https://github.com/ephemient/aoc2024.git
+  subdir: hs
 
 library
-    hs-source-dirs:   src
-    exposed-modules:
-        Day1
-    other-modules:
-        Common
-    build-depends:
-        base ^>=4.20.0.0,
-        containers ^>=0.7,
-        text ^>=2.1.1
-    ghc-options: -Wall
-    default-language: GHC2024
+  hs-source-dirs: src
+  exposed-modules:
+    Day1
+
+  other-modules:
+    Common
+
+  build-depends:
+    base ^>=4.20.0.0,
+    containers ^>=0.7,
+    text ^>=2.1.1,
+
+  ghc-options: -Wall
+  default-language: GHC2024
 
 executable aoc2024
-    hs-source-dirs:   app
-    main-is:          Main.hs
-    c-sources:        app/cbits/main.c
-    build-depends:
-        aoc2024,
-        base ^>=4.20.0.0,
-        filepath ^>=1.5.2.0,
-        text ^>=2.1.1
-    ghc-options:      -no-hs-main -threaded -Wall
-    default-language: GHC2024
+  hs-source-dirs: app
+  main-is: Main.hs
+  c-sources: app/cbits/main.c
+  build-depends:
+    aoc2024,
+    base ^>=4.20.0.0,
+    filepath ^>=1.5.2.0,
+    text ^>=2.1.1,
+
+  ghc-options:
+    -no-hs-main
+    -threaded
+    -Wall
+
+  default-language: GHC2024
 
 test-suite aoc2024-test
-    type:             exitcode-stdio-1.0
-    hs-source-dirs:   test
-    main-is:          Main.hs
-    other-modules:
-        Day1Spec
-    build-depends:
-        aoc2024,
-        base ^>=4.20.0.0,
-        hspec ^>=2.11.10,
-        text ^>=2.1.1
-    build-tool-depends:
-        hspec-discover:hspec-discover ^>=2.11.10
-    ghc-options:      -threaded -rtsopts "-with-rtsopts=-N" -Wall
-    default-language: GHC2024
+  type: exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is: Main.hs
+  other-modules:
+    Day1Spec
+
+  build-depends:
+    aoc2024,
+    base ^>=4.20.0.0,
+    hspec ^>=2.11.10,
+    text ^>=2.1.1,
+
+  build-tool-depends:
+    hspec-discover:hspec-discover ^>=2.11.10
+
+  ghc-options:
+    -threaded
+    -rtsopts
+    -with-rtsopts=-N
+    -Wall
+
+  default-language: GHC2024
 
 benchmark aoc2024-bench
-    type:             exitcode-stdio-1.0
-    hs-source-dirs:   bench
-    main-is:          Main.hs
-    c-sources:        bench/cbits/main.c
-    build-depends:
-        aoc2024,
-        base ^>=4.20.0.0,
-        criterion ^>=1.6.4.0,
-        filepath ^>=1.5.2.0,
-        text ^>=2.1.1
-    ghc-options:      -no-hs-main -threaded
-    default-language: GHC2024
+  type: exitcode-stdio-1.0
+  hs-source-dirs: bench
+  main-is: Main.hs
+  c-sources: bench/cbits/main.c
+  build-depends:
+    aoc2024,
+    base ^>=4.20.0.0,
+    criterion ^>=1.6.4.0,
+    filepath ^>=1.5.2.0,
+    text ^>=2.1.1,
+
+  ghc-options:
+    -no-hs-main
+    -threaded
+
+  default-language: GHC2024

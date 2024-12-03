@@ -12,11 +12,10 @@ application {
     mainClass.set("com.github.ephemient.aoc2024.exe.Main")
 }
 
-val benchmarkDir = layout.buildDirectory
-    .dir(
-        "reports/benchmarks/main/" +
-                LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replace(':', '.')
-    )
+val benchmarkDir = layout.buildDirectory.dir(
+    "reports/benchmarks/main/" +
+        LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME).replace(':', '.')
+)
 
 val benchmark by sourceSets.creating
 val benchmarkRun by tasks.registering(JavaExec::class) {

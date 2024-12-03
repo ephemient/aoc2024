@@ -21,7 +21,7 @@ spec :: Spec
 spec = do
   describe "part 1" $ do
     it "examples" $ do
-      part1 example1 `shouldBe` Right 161
+      part1 example1 `shouldBe` 161
   describe "part 2" $ do
     it "examples" $ do
-      part2 example2 `shouldBe` Right 48
+      part2 example2 `shouldBe` 48

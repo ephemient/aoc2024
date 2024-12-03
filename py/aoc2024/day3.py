@@ -12,7 +12,7 @@ xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
 """
 
 _pattern1 = re.compile(r"mul\((\d+),(\d+)\)")
-_pattern2 = re.compile(r"(do\(\))|(don't\(\))|mul\((\d+),(\d+)\)")
+_pattern2 = re.compile(r"(?:\A|do\(\))(.*?)(?:\Z|don't\(\))", re.S)
 
 
 def part1(data: str) -> int:
@@ -28,15 +28,7 @@ def part2(data: str) -> int:
     >>> part2(SAMPLE_INPUT_2)
     48
     """
-    enabled, total = True, 0
-    for m in _pattern2.finditer(data):
-        if m.group(1):
-            enabled = True
-        elif m.group(2):
-            enabled = False
-        elif enabled:
-            total += int(m.group(3)) * int(m.group(4))
-    return total
+    return sum(part1(m.group(1)) for m in _pattern2.finditer(data))
 
 
 parts = (part1, part2)

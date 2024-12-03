@@ -44,6 +44,15 @@ kotlin {
             }
         }
     }
+
+    val detektTaskNames = targets.flatMap { target ->
+        target.compilations.map { compilation ->
+            "detekt${target.targetName.capitalize()}${compilation.compilationName.capitalize()}"
+        }
+    }
+    tasks.check {
+        dependsOn(detektTaskNames)
+    }
 }
 
 val jvmTestCompilation = kotlin.jvm().compilations.getByName("test")

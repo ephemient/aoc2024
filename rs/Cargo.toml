@@ -17,6 +17,7 @@ name = "aoc2024"
 path = "src/main.rs"
 
 [dependencies]
+if_chain = "1.0.2"
 itertools = "0.13"
 
 [dev-dependencies]

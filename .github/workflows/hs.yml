@@ -71,6 +71,7 @@ jobs:
           path: hs
       - uses: haskell-actions/run-ormolu@v16
         with:
+          extra-args: --ghc-opt -XGHC2024
           pattern: |
             hs/**/*.hs
             hs/**/*.hs-boot

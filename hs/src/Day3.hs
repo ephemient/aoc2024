@@ -5,6 +5,9 @@
 -- Description:    <https://adventofcode.com/2024/day/3 Day 3: Mull It Over>
 module Day3 (part1, part2) where
 
+import Control.Monad (filterM)
+import Control.Monad.State (MonadState (get, put), evalState)
+import Data.Either (rights)
 import Data.Functor (($>))
 import Data.String (IsString)
 import Data.Text (Text)
@@ -26,8 +29,4 @@ part1 :: Text -> Either (ParseErrorBundle Text Void) Int
 part1 = fmap sum . parse parser1 ""
 
 part2 :: Text -> Either (ParseErrorBundle Text Void) Int
-part2 = fmap (snd . foldl' go (True, 0)) . parse parser2 ""
-  where
-    go (_, a) (Left z) = (z, a)
-    go (True, a) (Right b) = (True,) $! a + b
-    go k _ = k
+part2 = fmap (sum . rights . flip evalState True . filterM (either (($> False) . put) $ const get)) . parse parser2 ""

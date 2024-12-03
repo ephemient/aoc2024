@@ -1,31 +1,16 @@
 package com.github.ephemient.aoc2024
 
 class Day3(private val input: String) {
-    fun part1(): Int = regex1.findAll(input).sumOf { match ->
-        val (x, y) = match.destructured
-        x.toInt() * y.toInt()
-    }
+    fun part1(): Int = part1(input)
 
-    fun part2(): Int {
-        var enable = true
-        return regex2.findAll(input)
-            .filter { match ->
-                val (yes, no) = match.destructured
-                enable = when {
-                    yes.isNotEmpty() -> true
-                    no.isNotEmpty() -> false
-                    else -> return@filter enable
-                }
-                false
-            }
-            .sumOf { match ->
-                val (_, _, x, y) = match.destructured
-                x.toInt() * y.toInt()
-            }
-    }
+    fun part2(): Int = input.splitToSequence("do()").sumOf { part1(it.substringBefore("don't()")) }
 
     companion object {
-        private val regex1 = """mul\((\d+),(\d+)\)""".toRegex()
-        private val regex2 = """(do\(\))|(don't\(\))|mul\((\d+),(\d+)\)""".toRegex()
+        private val regex = """mul\((\d+),(\d+)\)""".toRegex()
+
+        private fun part1(input: String): Int = regex.findAll(input).sumOf { match ->
+            val (x, y) = match.destructured
+            x.toInt() * y.toInt()
+        }
     }
 }

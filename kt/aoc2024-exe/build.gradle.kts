@@ -24,7 +24,7 @@ kotlin {
             it.binaries.executable {
                 entryPoint("com.github.ephemient.aoc2024.exe.main")
             }
-        }
+        },
     ).onEach {
         it.compilations {
             create("bench") {
@@ -65,6 +65,15 @@ kotlin {
                 implementation(libs.okio)
             }
         }
+    }
+
+    val detektTaskNames = targets.flatMap { target ->
+        target.compilations.map { compilation ->
+            "detekt${target.targetName.capitalize()}${compilation.compilationName.capitalize()}"
+        }
+    }
+    tasks.check {
+        dependsOn(detektTaskNames)
     }
 }
 

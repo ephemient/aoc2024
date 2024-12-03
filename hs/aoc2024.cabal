@@ -23,6 +23,7 @@ library
   exposed-modules:
     Day1
     Day2
+    Day3
 
   other-modules:
     Common
@@ -30,6 +31,8 @@ library
   build-depends:
     base ^>=4.20.0.0,
     containers ^>=0.7,
+    megaparsec ^>=9.7.0,
+    parser-combinators ^>=1.3.0,
     text ^>=2.1.1,
 
   ghc-options: -Wall
@@ -43,6 +46,7 @@ executable aoc2024
     aoc2024,
     base ^>=4.20.0.0,
     filepath ^>=1.5.2.0,
+    megaparsec ^>=9.7.0,
     text ^>=2.1.1,
 
   ghc-options:

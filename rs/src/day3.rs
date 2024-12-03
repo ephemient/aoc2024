@@ -1,38 +1,27 @@
-use if_chain::if_chain;
+use std::iter::successors;
 
 pub fn part1(data: &str) -> i32 {
-    const PREFIX: &str = "mul(";
-
-    let mut data = data;
-    let mut total = 0;
-    while let Some(offset) = data.find(PREFIX) {
-        data = data[offset..].strip_prefix(PREFIX).unwrap();
-        if_chain! {
-            if let Some((a, b)) = data.split_once(',');
-            if let Ok(a) = a.parse::<i32>();
-            if let Some((b, c)) = b.split_once(')');
-            if let Ok(b) = b.parse::<i32>();
-            then {
-                data = c;
-                total += a * b;
-            }
-        }
-    }
-    total
+    data.split("mul(")
+        .skip(1)
+        .filter_map(|data| {
+            let (a, data) = data.split_once(',')?;
+            let a = a.parse::<i32>().ok()?;
+            let (b, _) = data.split_once(')')?;
+            let b = b.parse::<i32>().ok()?;
+            Some(a * b)
+        })
+        .sum::<i32>()
 }
 
 pub fn part2(data: &str) -> i32 {
-    let mut data = data;
-    let mut total = 0;
-    while !data.is_empty() {
-        let end = data.find("don't()").unwrap_or(data.len());
-        total += part1(&data[..end]);
-        let Some(start) = data[end..].find("do()") else {
-            break;
-        };
-        data = &data[end + start..];
+    fn split_end(data: &str) -> (&str, &str) {
+        data.split_once("don't()").unwrap_or((data, ""))
     }
-    total
+    successors(Some(split_end(data)), |(_, data)| {
+        Some(split_end(data.split_once("do()")?.1))
+    })
+    .map(|(data, _)| part1(data))
+    .sum()
 }
 
 #[cfg(test)]

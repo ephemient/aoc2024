@@ -135,25 +135,21 @@ benchmark {
     }
 }
 
-afterEvaluate {
-    val jvmBenchBenchmarkJar by tasks.existing
-    configurations.consumable("jvmBenchmark") {
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(
-                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-                objects.named(TargetJvmEnvironment.STANDARD_JVM),
-            )
-            attribute(
-                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-                objects.named(LibraryElements.JAR),
-            )
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
-        }
-        outgoing {
-            capability("com.github.ephemient.aoc2024:aoc2024-bench:1.0")
-            artifact(jvmBenchBenchmarkJar)
+configurations.consumable("jvmBenchmark") {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(
+            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+            objects.named(TargetJvmEnvironment.STANDARD_JVM),
+        )
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
+    }
+    outgoing {
+        capability("com.github.ephemient.aoc2024:aoc2024-bench:1.0")
+        afterEvaluate {
+            artifact(tasks.named("jvmBenchBenchmarkJar"))
         }
     }
 }

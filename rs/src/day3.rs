@@ -10,7 +10,7 @@ pub fn part1(data: &str) -> i32 {
             let b = b.parse::<i32>().ok()?;
             Some(a * b)
         })
-        .sum::<i32>()
+        .sum()
 }
 
 pub fn part2(data: &str) -> i32 {

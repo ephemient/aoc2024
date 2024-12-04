@@ -9,6 +9,7 @@ import Data.Text.IO qualified as TIO (readFile)
 import Day1 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
+import Day4 qualified (part1, part2)
 import System.Environment.Blank (getEnv, setEnv, unsetEnv)
 import System.FilePath (combine)
 
@@ -43,5 +44,11 @@ main =
           "Day 3"
           [ bench "part 1" $ nf Day3.part1 input,
             bench "part 2" $ nf Day3.part2 input
+          ],
+      env (getDayInput 4) $ \input ->
+        bgroup
+          "Day 4"
+          [ bench "part 1" $ nf Day4.part1 input,
+            bench "part 2" $ nf Day4.part2 input
           ]
     ]

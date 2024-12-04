@@ -14,8 +14,8 @@ pub fn part1(data: &str) -> usize {
                     .iter()
                     .filter_map(move |(dx, dy)| {
                         try_from_fn(|i| {
-                            y.checked_add_signed(i as isize * dy)
-                                .and_then(|y| lines.get(y))
+                            lines
+                                .get(y + i * dy)
                                 .zip(x.checked_add_signed(i as isize * dx))
                                 .and_then(|(line, x)| line.as_bytes().get(x).copied())
                         })

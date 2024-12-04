@@ -5,25 +5,27 @@
 -- Description:    <https://adventofcode.com/2024/day/4 Day 4: Ceres Search>
 module Day4 (part1, part2) where
 
-import Control.Monad (guard)
+import Control.Monad (ap, guard)
+import Data.Function (on)
 import Data.List (tails)
 import Data.Text (Text)
-import Data.Text qualified as T (drop, index, length, lines, reverse, splitOn, takeEnd, transpose, unpack)
+import Data.Text qualified as T (drop, lines, reverse, splitAt, transpose, unpack, zip)
+import Data.Text.Internal.Search qualified as T (indices)
 
 part1 :: Text -> Int
-part1 input = sum $ pred . length . T.splitOn "XMAS" <$> gs
+part1 input = sum $ ((+) `on` length . T.indices "XMAS") `ap` T.reverse <$> grid ++ T.transpose grid ++ concat diagonals
   where
-    g = T.lines input
-    d1 = T.transpose (zipWith T.drop [0 ..] g) ++ T.transpose (zipWith T.takeEnd [0 ..] $ T.reverse <$> g)
-    d2 = T.transpose (zipWith T.drop [0 ..] $ T.reverse <$> g) ++ T.transpose (zipWith T.takeEnd [0 ..] g)
-    gs = concat [g, T.reverse <$> g, T.transpose g, T.transpose $ reverse g, d1, T.reverse <$> d1, d2, T.reverse <$> d2]
+    grid = T.lines input
+    diagonals = do
+      (lower, upper) <- unzip . zipWith T.splitAt [0 ..] <$> [grid, reverse grid]
+      T.transpose <$> [T.reverse <$> lower, upper]
 
 part2 :: Text -> Int
 part2 input = length $ do
   prev : line : next : _ <- tails $ T.lines input
-  (i, 'A') <- zip [0 ..] $ T.unpack line
-  guard $ [prev !? pred i, prev !? succ i, next !? pred i, next !? succ i] `elem` ["MMSS", "MSMS", "SMSM", "SSMM"]
+  ('A', x, y) <- zip3 (T.unpack $ T.drop 1 line) (T.zip prev $ T.drop 2 next) (T.zip next $ T.drop 2 prev)
+  guard $ ok x && ok y
   where
-    t !? i
-      | 0 <= i, i < T.length t = t `T.index` i
-      | otherwise = '\0'
+    ok ('M', 'S') = True
+    ok ('S', 'M') = True
+    ok _ = False

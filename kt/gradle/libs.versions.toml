@@ -4,7 +4,7 @@ junit-jupiter = "5.11.3"
 kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
 kotlinx-coroutines = "1.9.0"
-native-image = "0.10.3"
+native-image = "0.10.4"
 okio = "3.9.1"
 
 [plugins]

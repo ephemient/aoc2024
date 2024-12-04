@@ -46,5 +46,6 @@ export GRAALVM_HOME=...
 Print solutions for the inputs provided in local data files as a GraalVM Native Image:
 
 ```sh
+export GRAALVM_HOME=...
 ./gradlew --no-configuration-cache :graalvm:nativeRun
 ```

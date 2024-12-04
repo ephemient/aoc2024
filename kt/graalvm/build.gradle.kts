@@ -72,7 +72,7 @@ val externalTestClasspath = configurations.resolvable("externalTestClasspath") {
 configurations.testImplementation {
     extendsFrom(externalTestClasses.get())
 }
-tasks.named<Test>("test") {
+tasks.test {
     testClassesDirs = files(testClassesDirs, externalTestClasspath.get())
     useJUnitPlatform()
 }

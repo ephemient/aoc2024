@@ -1,4 +1,4 @@
-use aoc2024::{day1, day2, day3, day4};
+use aoc2024::{day1, day2, day3, day4, day5};
 use std::collections::HashSet;
 use std::env;
 use std::fs;
@@ -13,7 +13,7 @@ fn get_day_input(day: u8) -> io::Result<String> {
     fs::read_to_string(Path::new(&datadir).join(format!("day{}.txt", day)))
 }
 
-fn main() -> io::Result<()> {
+fn main() -> anyhow::Result<()> {
     let args = env::args().skip(1).collect::<HashSet<_>>();
 
     if args.is_empty() || args.contains("1") {
@@ -45,6 +45,14 @@ fn main() -> io::Result<()> {
         let data = get_day_input(4)?;
         println!("{:?}", day4::part1(&data));
         println!("{:?}", day4::part2(&data));
+        println!();
+    }
+
+    if args.is_empty() || args.contains("5") {
+        println!("Day 5");
+        let data = get_day_input(5)?;
+        println!("{:?}", day5::part1(&data)?);
+        println!("{:?}", day5::part2(&data)?);
         println!();
     }
 

@@ -35,6 +35,7 @@ library
     containers ^>=0.7,
     megaparsec ^>=9.7.0,
     text ^>=2.1.2,
+    vector ^>=0.13.2.0,
 
   ghc-options: -Wall
   default-language: GHC2024

@@ -2,7 +2,8 @@ package com.github.ephemient.aoc2024
 
 class Day5(input: String) {
     private val rdeps: Map<Int, Set<Int>>
-    private val updates: List<List<Int>>
+    private val correct: List<List<Int>>
+    private val incorrect: List<List<Int>>
 
     init {
         val (deps, updates) = input.split("\n\n")
@@ -12,31 +13,30 @@ class Day5(input: String) {
                 val value = element.substringBefore('|').toInt()
                 accumulator?.apply { add(value) } ?: mutableSetOf(value)
             }
-        this.updates = updates.lines().mapNotNull { line ->
+        val (correct, incorrect) = updates.lines().mapNotNull { line ->
             line.ifEmpty { return@mapNotNull null }.split(',').map { it.toInt() }
-        }
-    }
-
-    fun part1() = updates.sumOf { pages ->
-        if (
+        }.partition { pages ->
             pages.withIndex().all { (i, x) ->
                 rdeps[x]?.let { pages.subList(i + 1, pages.size).any(it::contains) } != true
             }
-        ) pages[pages.size / 2] else 0
+        }
+        this.correct = correct
+        this.incorrect = incorrect
     }
 
-    fun part2(): Int = updates.sumOf { update ->
-        val pages = update.toMutableList()
+    fun part1() = correct.sumOf { it[it.size / 2] }
+
+    fun part2(): Int = incorrect.sumOf {
+        val pages = it.toMutableList()
         for (i in pages.indices) {
             while (true) {
                 val x = pages[i]
                 val j = pages.subList(i + 1, pages.size).indexOfFirst(rdeps[x].orEmpty()::contains)
-                if (j >= 0) {
-                    pages[i] = pages[i + 1 + j]
-                    pages[i + 1 + j] = x
-                } else break
+                if (j < 0) break
+                pages[i] = pages[i + 1 + j]
+                pages[i + 1 + j] = x
             }
         }
-        if (update != pages) pages[pages.size / 2] else 0
+        pages[pages.size / 2]
     }
 }

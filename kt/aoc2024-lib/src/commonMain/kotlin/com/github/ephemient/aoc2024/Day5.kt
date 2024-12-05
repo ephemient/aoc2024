@@ -1,15 +1,17 @@
 package com.github.ephemient.aoc2024
 
 class Day5(input: String) {
-    private val deps: Set<IntPair>
+    private val rdeps: Map<Int, Set<Int>>
     private val updates: List<List<Int>>
 
     init {
         val (deps, updates) = input.split("\n\n")
-        this.deps = deps.lines().mapTo(mutableSetOf()) { line ->
-            val (first, second) = line.split('|', limit = 2)
-            first.toInt() to second.toInt()
-        }
+        this.rdeps = deps.lineSequence()
+            .groupingBy { it.substringAfter('|').toInt() }
+            .aggregate { _, accumulator: MutableSet<Int>?, element, _ ->
+                val value = element.substringBefore('|').toInt()
+                accumulator?.apply { add(value) } ?: mutableSetOf(value)
+            }
         this.updates = updates.lines().mapNotNull { line ->
             line.ifEmpty { return@mapNotNull null }.split(',').map { it.toInt() }
         }
@@ -18,7 +20,7 @@ class Day5(input: String) {
     fun part1() = updates.sumOf { pages ->
         if (
             pages.withIndex().all { (i, x) ->
-                pages.subList(i + 1, pages.size).all { y -> y to x !in deps }
+                rdeps[x]?.let { pages.subList(i + 1, pages.size).any(it::contains) } != true
             }
         ) pages[pages.size / 2] else 0
     }
@@ -28,10 +30,10 @@ class Day5(input: String) {
         for (i in pages.indices) {
             while (true) {
                 val x = pages[i]
-                val j = i + 1 + pages.subList(i + 1, pages.size).indexOfFirst { it to x in deps }
-                if (j > i) {
-                    pages[i] = pages[j]
-                    pages[j] = x
+                val j = pages.subList(i + 1, pages.size).indexOfFirst(rdeps[x].orEmpty()::contains)
+                if (j >= 0) {
+                    pages[i] = pages[i + 1 + j]
+                    pages[i + 1 + j] = x
                 } else break
             }
         }

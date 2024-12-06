@@ -11,6 +11,7 @@ import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
+import Day6 qualified (part1, part2)
 import System.Environment.Blank (getEnv, setEnv, unsetEnv)
 import System.FilePath (combine)
 
@@ -57,5 +58,11 @@ main =
           "Day 5"
           [ bench "part 1" $ nf Day5.part1 input,
             bench "part 2" $ nf Day5.part2 input
+          ],
+      env (getDayInput 6) $ \input ->
+        bgroup
+          "Day 6"
+          [ bench "part 1" $ nf Day6.part1 input,
+            bench "part 2" $ nf Day6.part2 input
           ]
     ]

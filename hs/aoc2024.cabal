@@ -26,6 +26,7 @@ library
     Day3
     Day4
     Day5
+    Day6
 
   other-modules:
     Common
@@ -34,6 +35,7 @@ library
     base ^>=4.20.0.0,
     containers ^>=0.7,
     megaparsec ^>=9.7.0,
+    parallel ^>=3.2.2.0,
     text ^>=2.1.2,
     vector ^>=0.13.2.0,
 
@@ -68,6 +70,7 @@ test-suite aoc2024-test
     Day3Spec
     Day4Spec
     Day5Spec
+    Day6Spec
 
   build-depends:
     aoc2024,

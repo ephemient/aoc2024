@@ -3,6 +3,7 @@ package com.github.ephemient.aoc2024
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flowOf
@@ -13,20 +14,18 @@ class Day6(input: String) {
         val x = line.indexOf('^')
         if (x >= 0) y to x else null
     }
+    private val initialWalk: Set<IntPair> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        lines.walk(initialPosition).mapTo(mutableSetOf()) { it.first }
+    }
 
-    fun part1() = lines.walk(initialPosition).mapTo(mutableSetOf()) { it.first }.size
+    fun part1() = initialWalk.size
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun part2() = lines.walk(initialPosition)
-        .mapTo(mutableSetOf()) { it.first }
-        .apply { remove(initialPosition) }
-        .asFlow()
-        .flatMapMerge { (y, x) ->
-            val lines = lines.toMutableList()
-            lines[y] = StringBuilder(lines[y]).apply { set(x, '#') }.toString()
-            flowOf(Unit).filter { !lines.walk(initialPosition).all(mutableSetOf<Any?>()::add) }
-        }
-        .count()
+    suspend fun part2() = initialWalk.asFlow().drop(1).flatMapMerge { (y, x) ->
+        val lines = lines.toMutableList()
+        lines[y] = StringBuilder(lines[y]).apply { set(x, '#') }.toString()
+        flowOf(Unit).filter { !lines.walk(initialPosition).all(mutableSetOf<Any?>()::add) }
+    }.count()
 
     companion object {
         private fun List<String>.walk(position: IntPair) = sequence {

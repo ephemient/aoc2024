@@ -8,6 +8,18 @@ plugins {
     distribution
 }
 
+class UpdateWasmWrapper(private val mainFile: Provider<RegularFile>) : Action<Task> {
+    override fun execute(target: Task) {
+        val mainFile = mainFile.get().asFile
+        mainFile.writeText(
+            mainFile.readText().replace(
+                " argv, env, ",
+                " argv, env, preopens: { '/data': env['AOC2024_DATADIR'] ?? '.' }, "
+            )
+        )
+    }
+}
+
 kotlin {
     @Suppress("SpreadOperator")
     listOf(
@@ -16,9 +28,21 @@ kotlin {
                 mainClass = "com.github.ephemient.aoc2024.exe.Main"
             }
         },
-        *arrayOf(wasmJs(), js()).onEach {
-            it.nodejs()
-            it.binaries.executable()
+        wasmJs {
+            nodejs()
+            binaries.executable()
+        },
+        wasmWasi {
+            nodejs()
+            for (binary in binaries.executable()) {
+                binary.linkTask.configure {
+                    doLast(UpdateWasmWrapper(binary.mainFile))
+                }
+            }
+        },
+        js {
+            nodejs()
+            binaries.executable()
         },
         *arrayOf(linuxArm64(), linuxX64(), macosArm64(), macosX64(), mingwX64()).onEach {
             it.binaries.executable {

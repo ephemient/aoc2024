@@ -44,8 +44,8 @@ graalvmNative {
             runtimeArgs("-f", 0, "-wi", 1, "-w", "1s", "-r", "1s", "-bm", "avgt", "-tu", "us")
             val benchmarkFile = benchmarkDir.get().file("graalvmBench.json")
             runtimeArgs("-rf", "json", "-rff", benchmarkFile.asFile)
-            findProperty("benchmarkInclude")?.let { runtimeArgs("-e", it) }
-            findProperty("benchmarkExclude")?.let { runtimeArgs(it) }
+            findProperty("benchmarkExclude")?.let { runtimeArgs("-e", it) }
+            findProperty("benchmarkInclude")?.let { runtimeArgs(it) }
         }
     }
     agent {

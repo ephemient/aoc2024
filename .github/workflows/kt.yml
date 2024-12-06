@@ -44,6 +44,10 @@ jobs:
           path: kt/build/js/packages/aoc2024-aoc2024-exe-wasm-js/kotlin/*
       - uses: actions/upload-artifact@v4
         with:
+          name: aoc2024-wasmWasi
+          path: kt/aoc2024-exe/build/compileSync/wasmWasi/main/productionExecutable/optimized/*
+      - uses: actions/upload-artifact@v4
+        with:
           name: aoc2024-js
           path: kt/build/js/packages/aoc2024-aoc2024-exe/kotlin/*
 
@@ -61,7 +65,7 @@ jobs:
         working-directory: kt
       - uses: actions/upload-artifact@v4
         with:
-          name: aoc2024-native
+          name: aoc2024-graalvm
           path: kt/graalvm/build/native/nativeCompile/*
 
   run-jvm:
@@ -96,7 +100,7 @@ jobs:
           path: inputs
       - uses: actions/download-artifact@v4
         with:
-          name: aoc2024-native
+          name: aoc2024-graalvm
       - run: chmod +x aoc2024-native
       - run: ./aoc2024-native
         env:
@@ -138,7 +142,26 @@ jobs:
         env:
           AOC2024_DATADIR: inputs
 
-  run-node:
+  run-wasmWasi:
+    needs: [ get-inputs, build ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: inputs
+          path: inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: aoc2024-wasmWasi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.0.0
+      - run: node aoc2024-aoc2024-exe-wasm-wasi.mjs
+        env:
+          AOC2024_DATADIR: inputs
+
+  run-js:
     needs: [ get-inputs, build ]
     runs-on: ubuntu-latest
 

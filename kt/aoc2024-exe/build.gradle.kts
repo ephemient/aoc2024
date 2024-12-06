@@ -37,9 +37,15 @@ kotlin {
     applyHierarchyTemplate {
         withSourceSetTree(KotlinSourceSetTree("bench"))
         common {
-            withJvm()
-            withWasmJs()
-            withNative()
+            group("blocking") {
+                withJvm()
+                group("native") {
+                    withNative()
+                }
+            }
+            group("nonblocking") {
+                withWasmJs()
+            }
         }
     }
 

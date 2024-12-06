@@ -12,7 +12,7 @@ python = "^3.13"
 natsort = "^8.4.0"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.8.1"
+ruff = "^0.8.2"
 pytest = "^8.3.4"
 pytest-benchmark = { version = "^5.1.0", extras = ["histogram"] }
 
@@ -29,6 +29,7 @@ day2 = "aoc2024.day2:parts"
 day3 = "aoc2024.day3:parts"
 day4 = "aoc2024.day4:parts"
 day5 = "aoc2024.day5:parts"
+day6 = "aoc2024.day6:parts"
 
 [build-system]
 requires = ["poetry-core"]

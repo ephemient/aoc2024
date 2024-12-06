@@ -26,7 +26,7 @@ class Day5(input: String) {
 
     fun part1() = correct.sumOf { it[it.size / 2] }
 
-    fun part2(): Int = incorrect.sumOf {
+    fun part2() = incorrect.sumOf {
         val pages = it.toMutableList()
         for (i in pages.indices) {
             while (true) {

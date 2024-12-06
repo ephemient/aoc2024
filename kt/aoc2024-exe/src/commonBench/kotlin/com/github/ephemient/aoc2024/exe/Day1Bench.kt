@@ -2,6 +2,7 @@ package com.github.ephemient.aoc2024.exe
 
 import com.github.ephemient.aoc2024.Day1
 import kotlinx.benchmark.Benchmark
+import kotlinx.benchmark.Blackhole
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
@@ -20,4 +21,11 @@ class Day1Bench {
 
     @Benchmark
     fun part2() = Day1(input).part2()
+
+    @Benchmark
+    fun both(bh: Blackhole) {
+        val day1 = Day1(input)
+        bh.consume(day1.part1())
+        bh.consume(day1.part2())
+    }
 }

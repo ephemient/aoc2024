@@ -27,6 +27,7 @@ library
     Day4
     Day5
     Day6
+    Day7
 
   other-modules:
     Common
@@ -71,6 +72,7 @@ test-suite aoc2024-test
     Day4Spec
     Day5Spec
     Day6Spec
+    Day7Spec
 
   build-depends:
     aoc2024,

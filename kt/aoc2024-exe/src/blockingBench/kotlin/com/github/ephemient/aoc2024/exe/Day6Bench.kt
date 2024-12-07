@@ -27,7 +27,7 @@ class Day6Bench {
     }
 
     @Benchmark
-    fun both(bh: Blackhole) = runBlocking(Dispatchers.Default) {
+    fun solve(bh: Blackhole) = runBlocking(Dispatchers.Default) {
         val day6 = Day6(input)
         bh.consume(day6.part1())
         bh.consume(day6.part2())

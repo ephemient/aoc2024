@@ -23,7 +23,7 @@ class Day2Bench {
     fun part2() = Day2(input).part2()
 
     @Benchmark
-    fun both(bh: Blackhole) {
+    fun solve(bh: Blackhole) {
         val day2 = Day2(input)
         bh.consume(day2.part1())
         bh.consume(day2.part2())

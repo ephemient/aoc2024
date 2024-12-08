@@ -31,6 +31,7 @@ day4 = "aoc2024.day4:parts"
 day5 = "aoc2024.day5:parts"
 day6 = "aoc2024.day6:parts"
 day7 = "aoc2024.day7:parts"
+day8 = "aoc2024.day8:parts"
 
 [build-system]
 requires = ["poetry-core"]

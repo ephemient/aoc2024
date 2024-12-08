@@ -14,6 +14,7 @@ import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
 import Day6 qualified (part1, part2)
 import Day7 qualified (part1, part2)
+import Day8 qualified (part1, part2)
 import System.Environment (getArgs, lookupEnv)
 import System.FilePath (combine)
 import Text.Megaparsec (errorBundlePretty)
@@ -44,3 +45,4 @@ main = do
   run 5 (either (fail . errorBundlePretty) print) [Day5.part1, Day5.part2]
   run 6 print [Day6.part1, Day6.part2]
   run 7 (either fail print) [Day7.part1, Day7.part2]
+  run 8 print [Day8.part1, Day8.part2]

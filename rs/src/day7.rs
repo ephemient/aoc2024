@@ -53,10 +53,7 @@ pub fn part2(data: &str) -> usize {
             values.push(x / y);
         }
         if x > y {
-            let mut d = 10;
-            while d <= y {
-                d *= 10;
-            }
+            let d = 10usize.pow(y.checked_ilog10().unwrap_or(0) + 1);
             if x % d == y {
                 values.push(x / d);
             }

@@ -1,5 +1,5 @@
 use std::collections::BTreeSet;
-use std::iter;
+use std::iter::{once, successors};
 
 use itertools::Itertools;
 
@@ -34,14 +34,11 @@ where
                     .filter(move |point1| point0 != *point1)
                     .flat_map(|(y1, x1)| {
                         let (dy, dx) = (*y1 as isize - *y0 as isize, *x1 as isize - *x0 as isize);
-                        multiples
-                            .clone()
-                            .map(move |i| {
-                                y1.checked_add_signed(i * dy)
-                                    .filter(|y| *y < height)
-                                    .zip(x1.checked_add_signed(i * dx).filter(|x| *x < width))
-                            })
-                            .while_some()
+                        multiples.clone().map_while(move |i| {
+                            y1.checked_add_signed(i * dy)
+                                .zip(x1.checked_add_signed(i * dx))
+                                .filter(|(y, x)| *y < height && *x < width)
+                        })
                     })
             })
         })
@@ -50,11 +47,11 @@ where
 }
 
 pub fn part1(data: &str) -> usize {
-    solve(data, iter::once(1))
+    solve(data, once(1))
 }
 
 pub fn part2(data: &str) -> usize {
-    solve(data, iter::successors(Some(0), |i| Some(i + 1)))
+    solve(data, successors(Some(0), |i| Some(i + 1)))
 }
 
 #[cfg(test)]

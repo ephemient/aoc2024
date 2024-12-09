@@ -29,6 +29,7 @@ library
     Day6
     Day7
     Day8
+    Day9
 
   other-modules:
     Common
@@ -38,6 +39,7 @@ library
     containers ^>=0.7,
     megaparsec ^>=9.7.0,
     parallel ^>=3.2.2.0,
+    split ^>=0.2.5,
     text ^>=2.1.2,
     vector ^>=0.13.2.0,
 
@@ -75,6 +77,7 @@ test-suite aoc2024-test
     Day6Spec
     Day7Spec
     Day8Spec
+    Day9Spec
 
   build-depends:
     aoc2024,

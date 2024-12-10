@@ -22,6 +22,7 @@ library
   hs-source-dirs: src
   exposed-modules:
     Day1
+    Day10
     Day2
     Day3
     Day4
@@ -69,6 +70,7 @@ test-suite aoc2024-test
   hs-source-dirs: test
   main-is: Main.hs
   other-modules:
+    Day10Spec
     Day1Spec
     Day2Spec
     Day3Spec

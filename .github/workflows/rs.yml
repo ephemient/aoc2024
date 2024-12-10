@@ -3,10 +3,10 @@ name: Rust CI
 on:
   push:
     branches: [ main ]
-    paths: [ rs/** ]
+    paths: [ rs/**, .github/workflows/rs.yml ]
   pull_request:
     branches: [ main ]
-    paths: [ rs/** ]
+    paths: [ rs/**, .github/workflows/rs.yml ]
 
   workflow_dispatch:
 

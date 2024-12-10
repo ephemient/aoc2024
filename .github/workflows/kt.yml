@@ -3,10 +3,10 @@ name: Kotlin CI
 on:
   push:
     branches: [ main ]
-    paths: [ kt/** ]
+    paths: [ kt/**, .github/workflows/kt.yml ]
   pull_request:
     branches: [ main ]
-    paths: [ kt/** ]
+    paths: [ kt/**, .github/workflows/kt.yml ]
 
   workflow_dispatch:
 

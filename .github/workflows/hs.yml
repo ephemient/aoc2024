@@ -3,10 +3,10 @@ name: Haskell CI
 on:
   push:
     branches: [ main ]
-    paths: [ hs/** ]
+    paths: [ hs/**, .github/workflows/hs.yml ]
   pull_request:
     branches: [ main ]
-    paths: [ hs/** ]
+    paths: [ hs/**, .github/workflows/hs.yml ]
 
   workflow_dispatch:
 

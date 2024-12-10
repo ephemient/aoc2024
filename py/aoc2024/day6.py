@@ -4,7 +4,7 @@ Day 6: Guard Gallivant
 
 from functools import partial
 from multiprocessing import Pool
-from typing import Generator, Iterable, Set, Tuple
+from typing import Generator, Iterable
 
 SAMPLE_INPUT = """
 ....#.....
@@ -20,7 +20,7 @@ SAMPLE_INPUT = """
 """
 
 
-def _parse(data: str) -> Tuple[Tuple[int, int], Tuple[int, int], Set[Tuple[int, int]]]:
+def _parse(data: str) -> tuple[tuple[int, int], tuple[int, int], set[tuple[int, int]]]:
     obstructions = []
     for y, line in enumerate(filter(None, data.splitlines())):
         for x, char in enumerate(line):
@@ -33,10 +33,10 @@ def _parse(data: str) -> Tuple[Tuple[int, int], Tuple[int, int], Set[Tuple[int, 
 
 
 def _visit(
-    initial_pos: Tuple[int, int],
-    max_bounds: Tuple[int, int],
-    obstructions: Iterable[Tuple[int, int]],
-) -> Generator[Tuple[int, int], None, Set[Tuple[int, int]]]:
+    initial_pos: tuple[int, int],
+    max_bounds: tuple[int, int],
+    obstructions: Iterable[tuple[int, int]],
+) -> Generator[tuple[int, int], None, set[tuple[int, int]]]:
     y, x = initial_pos
     dy, dx = -1, 0
     max_y, max_x = max_bounds
@@ -55,10 +55,10 @@ def _visit(
 
 
 def _part1(
-    initial_pos: Tuple[int, int],
-    max_bounds: Tuple[int, int],
-    obstructions: Iterable[Tuple[int, int]],
-) -> Set[Tuple[int, int]]:
+    initial_pos: tuple[int, int],
+    max_bounds: tuple[int, int],
+    obstructions: Iterable[tuple[int, int]],
+) -> set[tuple[int, int]]:
     visitor = _visit(initial_pos, max_bounds, obstructions)
     while True:
         try:
@@ -77,9 +77,9 @@ def part1(data: str) -> int:
 
 
 def _part2(
-    initial_pos: Tuple[int, int],
-    max_bounds: Tuple[int, int],
-    obstructions: Iterable[Tuple[int, int]],
+    initial_pos: tuple[int, int],
+    max_bounds: tuple[int, int],
+    obstructions: Iterable[tuple[int, int]],
 ) -> bool:
     visited = set()
     for key in _visit(initial_pos, max_bounds, obstructions):

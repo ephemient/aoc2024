@@ -2,7 +2,7 @@
 Day 5: Print Queue
 """
 
-from typing import Callable, Iterable, List, Set, Tuple
+from typing import Callable, Iterable
 
 SAMPLE_INPUT = """
 47|53
@@ -36,7 +36,7 @@ SAMPLE_INPUT = """
 """
 
 
-def _parse(data: str) -> Tuple[Set[Tuple[int, int]], List[List[int]]]:
+def _parse(data: str) -> tuple[set[tuple[int, int]], list[list[int]]]:
     (deps, updates) = data.split("\n\n")
     deps = {
         tuple(int(page) for page in line.split("|"))
@@ -76,7 +76,7 @@ def part2(data: str) -> int:
     )
 
 
-def _partial_sorted[T](iterable: Iterable[T], ok: Callable[[T, T], bool]) -> List[T]:
+def _partial_sorted[T](iterable: Iterable[T], ok: Callable[[T, T], bool]) -> list[T]:
     output = list(iterable)
     i = 0
     while i < len(output):

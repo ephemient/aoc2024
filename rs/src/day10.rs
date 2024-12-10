@@ -1,5 +1,6 @@
 use std::array;
 use std::collections::{BTreeMap, BTreeSet};
+use std::iter::once;
 
 fn parse(data: &str) -> [BTreeSet<(usize, usize)>; 10] {
     let mut elevations = array::from_fn(|_| BTreeSet::new());
@@ -39,36 +40,37 @@ where
     ret
 }
 
-pub fn part1(data: &str) -> usize {
+fn solve<T, Init, Plus>(data: &str, init: Init, plus: Plus) -> impl Iterator<Item = T>
+where
+    T: Clone,
+    Init: Fn((usize, usize)) -> T,
+    Plus: Fn(&T, &T) -> T,
+{
     let elevations = parse(data);
     elevations[1..]
         .iter()
         .fold(
             elevations[0]
                 .iter()
-                .map(|point| (*point, [*point].into_iter().collect()))
+                .map(|point| (*point, init(*point)))
                 .collect(),
-            |acc, points| {
-                step(&acc, points, |x, y| -> BTreeSet<_> {
-                    x.union(y).copied().collect()
-                })
-            },
+            |acc, points| step(&acc, points, &plus),
         )
-        .values()
-        .map(|value| value.len())
-        .sum()
+        .into_values()
+}
+
+pub fn part1(data: &str) -> usize {
+    solve(
+        data,
+        |point| once(point).collect::<BTreeSet<_>>(),
+        |x, y| x.union(y).copied().collect(),
+    )
+    .map(|value| value.len())
+    .sum()
 }
 
 pub fn part2(data: &str) -> usize {
-    let elevations = parse(data);
-    elevations[1..]
-        .iter()
-        .fold(
-            elevations[0].iter().map(|point| (*point, 1usize)).collect(),
-            |acc, points| step(&acc, points, |x, y| x + y),
-        )
-        .values()
-        .sum()
+    solve(data, |_| 1, |x, y| x + y).sum()
 }
 
 #[cfg(test)]

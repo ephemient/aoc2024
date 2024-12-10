@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use aoc2024::{day1, day2, day3, day4, day5, day6, day7, day8, day9};
+use aoc2024::{day1, day10, day2, day3, day4, day5, day6, day7, day8, day9};
 use std::collections::HashSet;
 use std::env;
 use std::fs;
@@ -86,6 +86,14 @@ fn main() -> anyhow::Result<()> {
         let data = get_day_input(9)?;
         println!("{:?}", day9::part1(&data));
         println!("{:?}", day9::part2(&data));
+        println!();
+    }
+
+    if args.is_empty() || args.contains("10") {
+        println!("Day 10");
+        let data = get_day_input(10)?;
+        println!("{:?}", day10::part1(&data));
+        println!("{:?}", day10::part2(&data));
         println!();
     }
 

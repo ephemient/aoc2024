@@ -26,6 +26,11 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/dependency-submission@v4
+        with:
+          build-root-directory: kt
+          dependency-graph: generate-and-submit
+          dependency-graph-continue-on-failure: true
       - run: ./gradlew build distZip
         working-directory: kt
       - uses: actions/upload-artifact@v4

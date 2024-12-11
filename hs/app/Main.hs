@@ -9,6 +9,7 @@ import Data.Text (Text)
 import Data.Text.IO qualified as TIO (readFile)
 import Day1 qualified (part1, part2)
 import Day10 qualified (part1, part2)
+import Day11 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -50,3 +51,4 @@ main = do
   run 8 print [Day8.part1, Day8.part2]
   run 9 print [Day9.part1, Day9.part2]
   run 10 print [Day10.part1, Day10.part2]
+  run 11 (either fail print) [Day11.part1, Day11.part2]

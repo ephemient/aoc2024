@@ -1,8 +1,9 @@
 package com.github.ephemient.aoc2024.exe
 
-private fun argv(): JsArray<JsString> = js("process.argv")
+@JsModule("node:process")
+private external val argv: JsArray<JsString>
 
 suspend fun main() {
-    val argv = argv()
-    mainImpl(Array(argv.length - 2) { argv[it + 2].toString() })
+    val argv = argv
+    mainImpl(Array(argv.length) { argv[it].toString() })
 }

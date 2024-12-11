@@ -8,6 +8,7 @@ import Data.Text (Text)
 import Data.Text.IO qualified as TIO (readFile)
 import Day1 qualified (part1, part2)
 import Day10 qualified (part1, part2)
+import Day11 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -92,5 +93,11 @@ main =
           "Day 10"
           [ bench "part 1" $ nf Day10.part1 input,
             bench "part 2" $ nf Day10.part2 input
+          ],
+      env (getDayInput 11) $ \input ->
+        bgroup
+          "Day 11"
+          [ bench "part 1" $ nf Day11.part1 input,
+            bench "part 2" $ nf Day11.part2 input
           ]
     ]

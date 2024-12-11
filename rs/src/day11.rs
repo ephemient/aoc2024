@@ -13,12 +13,9 @@ fn solve(data: &str, n: usize) -> Result<u64, ParseIntError> {
     Ok((0..n)
         .fold(
             {
-                let mut counts = BTreeMap::new();
+                let mut counts = BTreeMap::<u64, u64>::new();
                 for word in data.split_ascii_whitespace() {
-                    counts
-                        .entry(word.parse::<u64>()?)
-                        .and_modify(|e| *e += 1)
-                        .or_insert(1u64);
+                    *counts.entry(word.parse()?).or_default() += 1;
                 }
                 counts
             },
@@ -26,21 +23,15 @@ fn solve(data: &str, n: usize) -> Result<u64, ParseIntError> {
                 let mut next = BTreeMap::new();
                 for (num, count) in counts {
                     if num == 0 {
-                        next.entry(1).and_modify(|e| *e += count).or_insert(count);
+                        *next.entry(1).or_default() += count;
                     } else {
                         let length = num.ilog10() + 1;
                         if length % 2 == 0 {
                             let divisor = 10u64.pow(length / 2);
-                            next.entry(num / divisor)
-                                .and_modify(|e| *e += count)
-                                .or_insert(count);
-                            next.entry(num % divisor)
-                                .and_modify(|e| *e += count)
-                                .or_insert(count);
+                            *next.entry(num / divisor).or_default() += count;
+                            *next.entry(num % divisor).or_default() += count;
                         } else {
-                            next.entry(2024 * num)
-                                .and_modify(|e| *e += count)
-                                .or_insert(count);
+                            *next.entry(2024 * num).or_default() += count;
                         }
                     }
                 }

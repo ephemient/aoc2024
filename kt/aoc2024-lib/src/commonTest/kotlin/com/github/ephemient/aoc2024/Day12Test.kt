@@ -13,9 +13,9 @@ class Day12Test {
 
     @Test
     fun part2() {
-//        assertEquals(80, Day12(example1).part2())
-//        assertEquals(436, Day12(example2).part2())
-//        assertEquals(236, Day12(example4).part2())
+        assertEquals(80, Day12(example1).part2())
+        assertEquals(436, Day12(example2).part2())
+        assertEquals(236, Day12(example4).part2())
         assertEquals(368, Day12(example5).part2())
         assertEquals(1206, Day12(example3).part2())
     }

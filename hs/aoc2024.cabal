@@ -25,6 +25,7 @@ library
     Day10
     Day11
     Day12
+    Day13
     Day2
     Day3
     Day4
@@ -75,6 +76,7 @@ test-suite aoc2024-test
     Day10Spec
     Day11Spec
     Day12Spec
+    Day13Spec
     Day1Spec
     Day2Spec
     Day3Spec

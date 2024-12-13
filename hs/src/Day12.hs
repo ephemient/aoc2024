@@ -61,7 +61,5 @@ part2 = solve $ \points ->
       ok (a, b) (c, d) = abs (c - a) <= 1 && b == d
    in sum
         [ countConsecutive $ first snd <$> edges
-        | edges <-
-            groupBy ((==) `on` fst . fst) horizontalEdges
-              ++ groupBy ((==) `on` fst . fst) verticalEdges
+        | edges <- [horizontalEdges, verticalEdges] >>= groupBy ((==) `on` fst . fst)
         ]

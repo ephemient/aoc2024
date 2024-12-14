@@ -12,6 +12,7 @@ import Day10 qualified (part1, part2)
 import Day11 qualified (part1, part2)
 import Day12 qualified (part1, part2)
 import Day13 qualified (part1, part2)
+import Day14 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -56,3 +57,4 @@ main = do
   run 11 (either fail print) [Day11.part1, Day11.part2]
   run 12 print [Day12.part1, Day12.part2]
   run 13 (either (fail . errorBundlePretty) print) [Day13.part1, Day13.part2]
+  run 14 (either (fail . errorBundlePretty) print) [Day14.part1, Day14.part2]

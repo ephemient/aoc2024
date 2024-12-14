@@ -11,6 +11,7 @@ import Day10 qualified (part1, part2)
 import Day11 qualified (part1, part2)
 import Day12 qualified (part1, part2)
 import Day13 qualified (part1, part2)
+import Day14 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -113,5 +114,11 @@ main =
           "Day 13"
           [ bench "part 1" $ nf Day13.part1 input,
             bench "part 2" $ nf Day13.part2 input
+          ],
+      env (getDayInput 14) $ \input ->
+        bgroup
+          "Day 14"
+          [ bench "part 1" $ nf Day14.part1 input,
+            bench "part 2" $ nf Day14.part2 input
           ]
     ]

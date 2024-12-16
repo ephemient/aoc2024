@@ -28,6 +28,7 @@ library
     Day13
     Day14
     Day15
+    Day16
     Day2
     Day3
     Day4
@@ -44,6 +45,7 @@ library
     array ^>=0.5.7.0,
     base ^>=4.20.0.0,
     containers ^>=0.7,
+    heap ^>=1.0.4,
     megaparsec ^>=9.7.0,
     parallel ^>=3.2.2.0,
     split ^>=0.2.5,
@@ -82,6 +84,7 @@ test-suite aoc2024-test
     Day13Spec
     Day14Spec
     Day15Spec
+    Day16Spec
     Day1Spec
     Day2Spec
     Day3Spec

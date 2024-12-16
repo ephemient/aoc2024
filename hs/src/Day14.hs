@@ -24,7 +24,7 @@ parser :: (MonadParsec e s m, IsString (Tokens s), Token s ~ Char, Num a) => m [
 parser = line `sepEndBy1` newline
   where
     line = (,) <$> (string "p=" *> v2) <*> (string " v=" *> v2)
-    v2 = (,) <$> (L.signed (pure ()) L.decimal <* char ',') <*> (L.signed (pure ()) L.decimal)
+    v2 = (,) <$> (L.signed (pure ()) L.decimal <* char ',') <*> L.signed (pure ()) L.decimal
 
 part1 :: Text -> Either (ParseErrorBundle Text Void) Int
 part1 = part1' 101 103

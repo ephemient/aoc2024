@@ -7,6 +7,7 @@ module Day14 (part1, part1', part2) where
 
 import Common (groupConsecutiveBy)
 import Control.Monad (join, liftM2)
+import Control.Parallel.Strategies (parList, rdeepseq, withStrategy)
 import Data.Char (intToDigit)
 import Data.Map qualified as Map (findWithDefault)
 import Data.Map.Strict qualified as Map (fromListWith)
@@ -47,7 +48,7 @@ part2 :: Text -> Either (ParseErrorBundle Text Void) Int
 part2 input = do
   robots <- parse parser "" input
   let (_, bestTime) =
-        minimum
+        minimum . withStrategy (parList rdeepseq) $
           [ (Down $ maximum $ map length verticalLines, t)
           | t <- [0 .. lcm width height - 1],
             let verticalLines =

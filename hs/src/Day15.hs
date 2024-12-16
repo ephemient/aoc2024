@@ -1,4 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 -- |
@@ -49,31 +48,31 @@ part1 input = do
         move' mover pos' delta =
           assert (grid ! pos == '@') . maybe state ((,pos') . (grid //) . sort) $
             mover delta pos' [(pos', '@'), (pos, '.')]
-        moveY, moveX :: Int -> (Int, Int) -> [((Int, Int), Char)] -> Maybe [((Int, Int), Char)]
         moveY dy pos'@(y, x) k = case grid ! pos' of
           '.' -> Just k
           'O' -> moveY dy (y + dy, x) $ ((y + dy, x), 'O') : (pos', '.') : k
-          '[' ->
-            assert (grid ! (y, x + 1) == ']') do
-              k' <-
-                moveY dy (y + dy, x) $
-                  ((y + dy, x), '[') : ((y + dy, x + 1), ']') : ((y, x), '.') : ((y, x + 1), '.') : k
-              moveY dy (y + dy, x + 1) k'
-          ']' -> assert (grid ! (y, x - 1) == '[') do
-            k' <- moveY dy (y + dy, x) $ ((y + dy, x - 1), '[') : ((y + dy, x), ']') : ((y, x - 1), '.') : ((y, x), '.') : k
+          '[' -> assert (grid ! (y, x + 1) == ']') $ do
+            k' <-
+              moveY dy (y + dy, x) $
+                ((y + dy, x), '[') : ((y + dy, x + 1), ']') : ((y, x), '.') : ((y, x + 1), '.') : k
+            moveY dy (y + dy, x + 1) k'
+          ']' -> assert (grid ! (y, x - 1) == '[') $ do
+            k' <-
+              moveY dy (y + dy, x) $
+                ((y + dy, x - 1), '[') : ((y + dy, x), ']') : ((y, x - 1), '.') : ((y, x), '.') : k
             moveY dy (y + dy, x - 1) k'
           _ -> Nothing
         moveX dx pos'@(y, x) k = case grid ! pos' of
           '.' -> Just k
-          d | d == 'O' || d == '[' || d == ']' -> moveX dx (y, x + dx) $ ((y, x + dx), d) : (pos', '.') : k
-          _ -> Nothing
+          '#' -> Nothing
+          d -> moveX dx (y, x + dx) $ ((y, x + dx), d) : (pos', '.') : k
     move state _ = state
 
 part2 :: Text -> Either String Int
-part2 =
-  part1 . T.concatMap \case
-    '#' -> "##"
-    '.' -> ".."
-    '@' -> "@."
-    'O' -> "[]"
-    c -> T.singleton c
+part2 = part1 . T.concatMap f
+  where
+    f '#' = "##"
+    f '.' = ".."
+    f '@' = "@."
+    f 'O' = "[]"
+    f c = T.singleton c

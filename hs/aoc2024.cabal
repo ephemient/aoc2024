@@ -27,6 +27,7 @@ library
     Day12
     Day13
     Day14
+    Day15
     Day2
     Day3
     Day4
@@ -40,6 +41,7 @@ library
     Common
 
   build-depends:
+    array ^>=0.5.7.0,
     base ^>=4.20.0.0,
     containers ^>=0.7,
     megaparsec ^>=9.7.0,
@@ -79,6 +81,7 @@ test-suite aoc2024-test
     Day12Spec
     Day13Spec
     Day14Spec
+    Day15Spec
     Day1Spec
     Day2Spec
     Day3Spec

@@ -4,6 +4,7 @@ module Main (main) where
 
 import Control.Monad (ap, when)
 import Data.Foldable (find)
+import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import Data.Text.IO qualified as TIO (readFile)
@@ -15,6 +16,7 @@ import Day13 qualified (part1, part2)
 import Day14 qualified (part1, part2)
 import Day15 qualified (part1, part2)
 import Day16 qualified (part1, part2)
+import Day17 qualified (part1, part2)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -62,3 +64,4 @@ main = do
   run 14 (either (fail . errorBundlePretty) print) [Day14.part1, Day14.part2]
   run 15 (either fail print) [Day15.part1, Day15.part2]
   run 16 (maybe (fail "error") print) [Day16.part1, Day16.part2]
+  run 17 (either (fail . errorBundlePretty) $ putStrLn . intercalate "," . map show) [Day17.part1, fmap (: []) . Day17.part2]

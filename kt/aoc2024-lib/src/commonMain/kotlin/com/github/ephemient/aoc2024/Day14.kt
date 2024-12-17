@@ -16,7 +16,6 @@ class Day14(input: String) {
                     if (y < height / 2) 0 else if (y > height / 2) 2 else continue
             ]++
         }
-        println(quadrants.toList())
         return quadrants.fold(1, Int::times)
     }
 
@@ -35,7 +34,7 @@ class Day14(input: String) {
             }
         }
         t to maxConsecutive
-    }.maxBy(IntPair::second).also(::println).first
+    }.maxBy(IntPair::second).first
 
     private data class Robot(val x: Int, val y: Int, val vx: Int, val vy: Int)
 

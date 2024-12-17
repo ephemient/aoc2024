@@ -25,8 +25,10 @@ Prize: X=18641, Y=10279
 
 _pattern = re.compile(r"\d+")
 
+
 def _parse(data: str) -> Generator[tuple[int, int, int, int, int, int]]:
     return zip(*((int(match.group(0)) for match in _pattern.finditer(data)),) * 6)
+
 
 def _solve(ax: int, ay: int, bx: int, by: int, x: int, y: int) -> int:
     anumerator = x * by - y * bx
@@ -39,6 +41,7 @@ def _solve(ax: int, ay: int, bx: int, by: int, x: int, y: int) -> int:
     b = bnumerator // bdenominator
     return 3 * a + b
 
+
 def part1(data: str) -> int:
     """
     >>> part1(SAMPLE_INPUT)
@@ -46,7 +49,12 @@ def part1(data: str) -> int:
     """
     return sum(_solve(ax, ay, bx, by, x, y) for ax, ay, bx, by, x, y in _parse(data))
 
+
 def part2(data: str) -> int:
-    return sum(_solve(ax, ay, bx, by, x + 10000000000000, y + 10000000000000) for ax, ay, bx, by, x, y in _parse(data))
+    return sum(
+        _solve(ax, ay, bx, by, x + 10000000000000, y + 10000000000000)
+        for ax, ay, bx, by, x, y in _parse(data)
+    )
+
 
 parts = (part1, part2)

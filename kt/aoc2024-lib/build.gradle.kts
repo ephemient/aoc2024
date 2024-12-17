@@ -22,6 +22,17 @@ kotlin {
     macosX64()
     mingwX64()
 
+    applyDefaultHierarchyTemplate {
+        common {
+            group("nonJvm") {
+                withWasmJs()
+                withWasmWasi()
+                withJs()
+                withNative()
+            }
+        }
+    }
+
     sourceSets {
         commonMain {
             dependencies {

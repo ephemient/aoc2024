@@ -19,6 +19,6 @@ Development occurs in language-specific directories:
 |[Day12.hs](hs/src/Day12.hs)|[Day12.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day12.kt)|[day12.py](py/aoc2024/day12.py)|[day12.rs](rs/src/day12.rs)|
 |[Day13.hs](hs/src/Day13.hs)|[Day13.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day13.kt)|[day13.py](py/aoc2024/day13.py)|[day13.rs](rs/src/day13.rs)|
 |[Day14.hs](hs/src/Day14.hs)|[Day14.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day14.kt)|[day14.py](py/aoc2024/day14.py)||
-|[Day15.hs](hs/src/Day15.hs)|[Day15.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day15.kt)|||
+|[Day15.hs](hs/src/Day15.hs)|[Day15.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day15.kt)|[day15.py](py/aoc2024/day15.py)||
 |[Day16.hs](hs/src/Day16.hs)|[Day16.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day16.kt)|||
 |[Day17.hs](hs/src/Day17.hs)|[Day17.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day17.kt)|||

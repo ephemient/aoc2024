@@ -88,20 +88,20 @@ class _Warehouse:
             front = {(y + dy, x + dx) for y, x in front}
             for y, x in list(front):
                 match self.grid[y][x]:
-                    case '.':
+                    case ".":
                         front.remove((y, x))
-                    case '[' if dy:
+                    case "[" if dy:
                         front.add((y, x + 1))
-                    case ']' if dy:
+                    case "]" if dy:
                         front.add((y, x - 1))
-                    case 'O' | '[' | ']':
+                    case "O" | "[" | "]":
                         pass
                     case _:
                         return
         for front in levels[::-1]:
             for y, x in front:
                 self.grid[y + dy][x + dx] = self.grid[y][x]
-                self.grid[y][x] = '.'
+                self.grid[y][x] = "."
         self.pos = self.pos[0] + dy, self.pos[1] + dx
 
     def gps(self) -> int:

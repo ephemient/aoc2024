@@ -30,6 +30,8 @@ jobs:
         working-directory: py
       - run: poetry run ruff check
         working-directory: py
+      - run: poetry run ruff format --check
+        working-directory: py
       - run: poetry run pytest --benchmark-skip
         working-directory: py
       - run: poetry build

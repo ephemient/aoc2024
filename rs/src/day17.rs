@@ -49,12 +49,7 @@ fn run(mut a: usize, mut b: usize, mut c: usize, program: &[usize]) -> Option<Ve
 
 pub fn part1(data: &str) -> Option<String> {
     let (a, b, c, program) = parse(data)?;
-    Some(
-        run(a, b, c, &program)?
-            .into_iter()
-            .map(|num| num.to_string())
-            .join(","),
-    )
+    Some(run(a, b, c, &program)?.into_iter().join(","))
 }
 
 pub fn part2(data: &str) -> Option<usize> {

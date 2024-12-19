@@ -3,6 +3,7 @@
 module Main (main) where
 
 import Control.Monad (ap, when)
+import Data.Bifunctor (bimap)
 import Data.Foldable (find)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
@@ -18,6 +19,7 @@ import Day15 qualified (part1, part2)
 import Day16 qualified (part1, part2)
 import Day17 qualified (part1, part2)
 import Day18 qualified (part1, part2)
+import Day19 qualified (solve)
 import Day2 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
@@ -67,3 +69,4 @@ main = do
   run 16 (maybe (fail "error") print) [Day16.part1, Day16.part2]
   run 17 (either (fail . errorBundlePretty) $ putStrLn . intercalate "," . map show) [Day17.part1, fmap (: []) . Day17.part2]
   run 18 (either fail putStrLn) [fmap show . Day18.part1, fmap (uncurry $ (. (',' :) . show) . shows) . Day18.part2]
+  run 19 (uncurry (>>) . bimap print print) [Day19.solve]

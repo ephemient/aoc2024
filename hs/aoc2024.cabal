@@ -33,6 +33,7 @@ library
     Day18
     Day19
     Day2
+    Day20
     Day3
     Day4
     Day5
@@ -92,6 +93,7 @@ test-suite aoc2024-test
     Day18Spec
     Day19Spec
     Day1Spec
+    Day20Spec
     Day2Spec
     Day3Spec
     Day4Spec

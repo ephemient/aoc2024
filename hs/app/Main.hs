@@ -21,6 +21,7 @@ import Day17 qualified (part1, part2)
 import Day18 qualified (part1, part2)
 import Day19 qualified (solve)
 import Day2 qualified (part1, part2)
+import Day20 qualified (solve)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
@@ -70,3 +71,4 @@ main = do
   run 17 (either (fail . errorBundlePretty) $ putStrLn . intercalate "," . map show) [Day17.part1, fmap (: []) . Day17.part2]
   run 18 (either fail putStrLn) [fmap show . Day18.part1, fmap (uncurry $ (. (',' :) . show) . shows) . Day18.part2]
   run 19 (uncurry (>>) . bimap print print) [Day19.solve]
+  run 20 print [Day20.solve 2 100, Day20.solve 20 100]

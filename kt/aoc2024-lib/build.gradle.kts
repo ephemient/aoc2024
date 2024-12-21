@@ -4,7 +4,16 @@ plugins {
 }
 
 kotlin {
-    jvm()
+    jvm {
+        val codegen by compilations.creating
+        val runCodegen by tasks.registering(JavaExec::class) {
+            mainClass = "com.github.ephemient.aoc2024.codegen.Main"
+            classpath(codegen.output.allOutputs, codegen.runtimeDependencyFiles)
+            outputs.dir(layout.buildDirectory.dir("build/sources/codegen"))
+            argumentProviders.add { listOf(outputs.files.singleFile.path) }
+        }
+        kotlin.sourceSets.getByName("commonMain").kotlin.srcDirs(runCodegen)
+    }
     wasmJs {
         browser()
         nodejs()
@@ -52,6 +61,12 @@ kotlin {
                 implementation(kotlin("test-junit5"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
+            }
+        }
+
+        getByName("jvmCodegen") {
+            dependencies {
+                implementation(libs.kotlinpoet)
             }
         }
     }

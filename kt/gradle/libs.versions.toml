@@ -4,6 +4,7 @@ junit-jupiter = "5.11.4"
 kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
 kotlinx-coroutines = "1.10.1"
+kotlinpoet = "2.0.0"
 native-image = "0.10.4"
 okio = "3.9.1"
 
@@ -19,6 +20,7 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
 kotlin-wrappers-node = { module = "org.jetbrains.kotlin-wrappers:kotlin-node", version = "22.5.5-pre.854" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinx-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }

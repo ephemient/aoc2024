@@ -49,6 +49,7 @@ jobs:
       - run: cabal bench bench:aoc2024-bench --benchmark-options='-o aoc2024-bench.html'
         env:
           AOC2024_DATADIR: ${{ github.workspace }}/inputs
+          TRACE: 0
         working-directory: hs
       - uses: actions/checkout@v4
         with:

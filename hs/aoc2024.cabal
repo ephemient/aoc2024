@@ -34,6 +34,7 @@ library
     Day19
     Day2
     Day20
+    Day21
     Day3
     Day4
     Day5
@@ -94,6 +95,7 @@ test-suite aoc2024-test
     Day19Spec
     Day1Spec
     Day20Spec
+    Day21Spec
     Day2Spec
     Day3Spec
     Day4Spec

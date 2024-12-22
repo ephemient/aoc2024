@@ -2,7 +2,8 @@
 Day 22: Monkey Market
 """
 
-from collections import defaultdict, deque
+from collections import deque
+from ctypes import c_bool, c_int, memset
 from functools import reduce
 
 SAMPLE_INPUT_1 = """\
@@ -34,7 +35,6 @@ def part1(data: str) -> int:
     return sum(
         reduce(lambda num, _: _step(num), range(2000), int(line))
         for line in data.splitlines()
-        if line
     )
 
 
@@ -43,21 +43,28 @@ def part2(data: str) -> int:
     >>> part2(SAMPLE_INPUT_2)
     23
     """
-    sequences = defaultdict(dict)
-    for i, line in enumerate(data.splitlines()):
-        if not line:
-            continue
-        window = deque((int(line),), 5)
+    output = (c_int * (19 * 19 * 19 * 19))()
+    seen = (c_bool * (19 * 19 * 19 * 19))()
+    best = 0
+    for line in data.splitlines():
+        num = int(line)
+        memset(seen, False, len(seen))
+        window = deque((num % 10,), 5)
         for _ in range(2000):
             if len(window) == window.maxlen:
                 window.popleft()
-            window.append(_step(window[-1]))
+            num = _step(num)
+            window.append(num % 10)
             if len(window) == window.maxlen:
-                prices = [value % 10 for value in window]
-                values = sequences[tuple(x - y for x, y in zip(prices, prices[1:]))]
-                if i not in values:
-                    values[i] = prices[-1]
-    return max(sum(values.values()) for values in sequences.values())
+                a, b, c, d, e = window
+                key = (((a + 9 - b) * 19 + b + 9 - c) * 19 + c + 9 - d) * 19 + d + 9 - e
+                if not seen[key]:
+                    value = output[key] + e
+                    output[key] = value
+                    if best < value:
+                        best = value
+                    seen[key] = True
+    return best
 
 
 parts = (part1, part2)

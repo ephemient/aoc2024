@@ -1,7 +1,8 @@
-use std::collections::BTreeMap;
 use std::iter;
+use std::sync::atomic::{AtomicU32, Ordering};
 
 use itertools::Itertools;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 fn step(num: u32) -> u32 {
     let num = (num ^ num << 6) & 16777215;
@@ -11,34 +12,38 @@ fn step(num: u32) -> u32 {
 
 pub fn part1(data: &str) -> u64 {
     data.lines()
+        .collect::<Vec<_>>()
+        .par_iter()
         .filter_map(|line| iter::successors(line.parse().ok(), |num| Some(step(*num))).nth(2000))
         .map(Into::<u64>::into)
         .sum()
 }
 
-pub fn part2(data: &str) -> Option<u32> {
-    let mut sequences = BTreeMap::<_, BTreeMap<_, _>>::new();
-    for (i, line) in data.lines().enumerate() {
-        for (a, b, c, d, e) in iter::successors(line.parse().ok(), |num| Some(step(*num)))
-            .take(2001)
-            .tuple_windows()
-        {
-            sequences
-                .entry((
-                    (a % 10) as i8 - (b % 10) as i8,
-                    (b % 10) as i8 - (c % 10) as i8,
-                    (c % 10) as i8 - (d % 10) as i8,
-                    (d % 10) as i8 - (e % 10) as i8,
-                ))
-                .or_default()
-                .entry(i)
-                .or_insert(e % 10);
-        }
-    }
-    sequences
-        .into_values()
-        .map(|values| values.into_values().sum())
+pub fn part2(data: &str) -> u32 {
+    let results = &[const { AtomicU32::new(0) }; 19 * 19 * 19 * 19];
+    data.lines()
+        .collect::<Vec<_>>()
+        .par_iter()
+        .for_each(|line| {
+            let mut seen = [false; 19 * 19 * 19 * 19];
+            for (a, b, c, d, e) in iter::successors(line.parse().ok(), |num| Some(step(*num)))
+                .take(2001)
+                .map(|num| num % 10)
+                .tuple_windows()
+            {
+                let key =
+                    ((((9 + a - b) * 19 + 9 + b - c) * 19 + 9 + c - d) * 19 + 9 + d - e) as usize;
+                if !seen[key] {
+                    results[key].fetch_add(e, Ordering::AcqRel);
+                    seen[key] = true;
+                }
+            }
+        });
+    results
+        .iter()
+        .map(|result| result.load(Ordering::Relaxed))
         .max()
+        .unwrap_or_default()
 }
 
 #[cfg(test)]
@@ -68,6 +73,6 @@ mod tests {
 
     #[test]
     fn part2_examples() {
-        assert_eq!(Some(23), part2(EXAMPLE_2));
+        assert_eq!(23, part2(EXAMPLE_2));
     }
 }

@@ -193,7 +193,7 @@ fn main() -> anyhow::Result<()> {
         println!("Day 22");
         let data = get_day_input(22)?;
         println!("{:?}", day22::part1(&data));
-        println!("{:?}", day22::part2(&data).ok_or(anyhow!("None"))?);
+        println!("{:?}", day22::part2(&data));
         println!();
     }
 

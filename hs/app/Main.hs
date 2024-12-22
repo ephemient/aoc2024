@@ -23,6 +23,7 @@ import Day19 qualified (solve)
 import Day2 qualified (part1, part2)
 import Day20 qualified (solve)
 import Day21 qualified (solve)
+import Day22 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
@@ -74,3 +75,4 @@ main = do
   run 19 (uncurry (>>) . bimap print print) [Day19.solve]
   run 20 print [Day20.solve 2 100, Day20.solve 20 100]
   run 21 print [Day21.solve 2, Day21.solve 25]
+  run 22 (either fail print) [Day22.part1, Day22.part2]

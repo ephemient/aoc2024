@@ -20,6 +20,7 @@ import Day19 qualified (solve)
 import Day2 qualified (part1, part2)
 import Day20 qualified (solve)
 import Day21 qualified (solve)
+import Day22 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
@@ -168,5 +169,11 @@ main =
           "Day 21"
           [ bench "part 1" $ nf (Day21.solve 2) input,
             bench "part 2" $ nf (Day21.solve 25) input
+          ],
+      env (getDayInput 22) $ \input ->
+        bgroup
+          "Day 22"
+          [ bench "part 1" $ nf Day22.part1 input,
+            bench "part 2" $ nf Day22.part2 input
           ]
     ]

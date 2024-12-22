@@ -1,20 +1,33 @@
 package com.github.ephemient.aoc2024
 
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.fold
+
 class Day22(input: String) {
     private val seeds = input.lines().mapNotNull { it.toIntOrNull() }
 
-    fun part1() = seeds.sumOf { generateSequence(it, ::step).elementAt(2000).toLong() }
+    suspend fun part1() = seeds.asFlow().flatMapMerge {
+        flow { emit(generateSequence(it, ::step).elementAt(2000).toLong()) }
+    }.fold(0, Long::plus)
 
-    fun part2() = seeds.asSequence()
-        .withIndex()
-        .flatMap { (i, seed) ->
-            generateSequence(seed, ::step).take(2001).map { it % 10 }.windowed(5).map { IndexedValue(i, it) }
-        }
-        .groupingBy { it.value.zipWithNext(Int::minus) }
-        .aggregate { _, acc: MutableMap<Int, Int>?, (i, list), _ ->
-            (acc ?: mutableMapOf()).apply { getOrPut(i, list::last) }
-        }
-        .maxOf { it.value.values.sum() }
+    suspend fun part2(): Int {
+        val data = IntArray(19 * 19 * 19 * 19)
+        seeds.asFlow().flatMapMerge {
+            flow {
+                val seen = BooleanArray(19 * 19 * 19 * 19)
+                for (window in generateSequence(it, ::step).take(2001).map { it % 10 }.windowed(5)) {
+                    val key = window.zipWithNext(Int::minus).fold(0) { a, b -> 19 * a + b + 9 }
+                    if (!seen[key]) {
+                        emit(IndexedValue(key, window.last()))
+                        seen[key] = true
+                    }
+                }
+            }
+        }.collect { (key, value) -> data[key] += value }
+        return data.max()
+    }
 
     companion object {
         private fun step(secret: Int): Int {

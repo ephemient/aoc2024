@@ -6,6 +6,9 @@ interface PriorityQueue<E : Any> : Iterable<E> {
     fun add(element: E): Boolean
 
     @Throws(NoSuchElementException::class)
+    fun peek(): E
+
+    @Throws(NoSuchElementException::class)
     fun remove(): E
 }
 

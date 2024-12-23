@@ -20,6 +20,9 @@ internal class CommonPriorityQueue<E : Any>(private val comparator: Comparator<i
         return true
     }
 
+    @Throws(NoSuchElementException::class)
+    override fun peek(): E = storage.first()
+
     @Suppress("NestedBlockDepth")
     @Throws(NoSuchElementException::class)
     override fun remove(): E {

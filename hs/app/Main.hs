@@ -8,6 +8,7 @@ import Data.Foldable (find)
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe)
 import Data.Text (Text)
+import Data.Text qualified as T (unpack)
 import Data.Text.IO qualified as TIO (readFile)
 import Day1 qualified (part1, part2)
 import Day10 qualified (part1, part2)
@@ -24,6 +25,7 @@ import Day2 qualified (part1, part2)
 import Day20 qualified (solve)
 import Day21 qualified (solve)
 import Day22 qualified (part1, part2)
+import Day23 qualified (part1, part2)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
@@ -76,3 +78,4 @@ main = do
   run 20 print [Day20.solve 2 100, Day20.solve 20 100]
   run 21 print [Day21.solve 2, Day21.solve 25]
   run 22 (either fail print) [Day22.part1, Day22.part2]
+  run 23 putStrLn [show . Day23.part1, T.unpack . Day23.part2]

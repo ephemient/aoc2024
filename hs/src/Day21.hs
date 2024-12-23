@@ -12,14 +12,15 @@ import Data.Text qualified as T (foldl', lines, unpack)
 
 luts :: [UArray ((Int, Int), (Int, Int)) Int]
 luts =
-  iterate buildLut . listArray ((lo, lo), (hi, hi)) $
-    [abs (x2 - x1) + abs (y2 - y1) + 1 | ((x1, y1), (x2, y2)) <- range ((lo, lo), (hi, hi))]
+  iterate buildLut . listArray arrayBounds $
+    [abs (x2 - x1) + abs (y2 - y1) + 1 | ((x1, y1), (x2, y2)) <- range arrayBounds]
   where
-    (lo, hi) = ((0, -1), (2, 3))
+    (minXY, maxXY) = ((0, -1), (2, 3))
+    arrayBounds = ((minXY, minXY), (maxXY, maxXY))
     buildLut lut =
-      listArray (((0, -1), (0, -1)), ((2, 3), (2, 3))) $
+      listArray arrayBounds $
         [ foldl' min maxBound $ map cost $ filter check $ permutations moves
-        | ((x1, y1), (x2, y2)) <- range ((lo, lo), (hi, hi)),
+        | ((x1, y1), (x2, y2)) <- range arrayBounds,
           let moves =
                 replicate (x2 - x1) (2, -1)
                   ++ replicate (y2 - y1) (1, 0)

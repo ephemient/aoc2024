@@ -24,24 +24,24 @@ pub fn part2(data: &str) -> u32 {
     data.lines()
         .collect::<Vec<_>>()
         .par_iter()
-        .for_each(|line| {
+        .filter_map(|line| {
             let mut seen = [false; 19 * 19 * 19 * 19];
-            for (a, b, c, d, e) in iter::successors(line.parse().ok(), |num| Some(step(*num)))
+            iter::successors(line.parse().ok(), |num| Some(step(*num)))
                 .take(2001)
                 .map(|num| num % 10)
                 .tuple_windows()
-            {
-                let key =
-                    ((((9 + a - b) * 19 + 9 + b - c) * 19 + 9 + c - d) * 19 + 9 + d - e) as usize;
-                if !seen[key] {
-                    results[key].fetch_add(e, Ordering::AcqRel);
-                    seen[key] = true;
-                }
-            }
-        });
-    results
-        .iter()
-        .map(|result| result.load(Ordering::Relaxed))
+                .filter_map(|(a, b, c, d, e)| {
+                    let key = ((((9 + a - b) * 19 + 9 + b - c) * 19 + 9 + c - d) * 19 + 9 + d - e)
+                        as usize;
+                    if !seen[key] {
+                        seen[key] = true;
+                        Some(results[key].fetch_add(e, Ordering::AcqRel) + e)
+                    } else {
+                        None
+                    }
+                })
+                .max()
+        })
         .max()
         .unwrap_or_default()
 }

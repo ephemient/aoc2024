@@ -14,7 +14,7 @@ class Day22(input: String) {
 
     suspend fun part2(): Int {
         val data = IntArray(19 * 19 * 19 * 19)
-        seeds.asFlow().flatMapMerge {
+        return seeds.asFlow().flatMapMerge {
             flow {
                 val seen = BooleanArray(19 * 19 * 19 * 19)
                 for (window in generateSequence(it, ::step).take(2001).map { it % 10 }.windowed(5)) {
@@ -25,8 +25,7 @@ class Day22(input: String) {
                     }
                 }
             }
-        }.collect { (key, value) -> data[key] += value }
-        return data.max()
+        }.fold(0) { acc, (key, value) -> maxOf(acc, (data[key] + value).also { data[key] = it }) }
     }
 
     companion object {

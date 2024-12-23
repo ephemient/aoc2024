@@ -1,7 +1,9 @@
 plugins {
     base
+    alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.multiplatform) apply false
     alias(libs.plugins.kotlin.plugin.allopen) apply false
+    alias(libs.plugins.ksp) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinx.benchmark) apply false
 }

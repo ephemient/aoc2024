@@ -5,14 +5,17 @@ kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
 kotlinx-coroutines = "1.10.1"
 kotlinpoet = "2.0.0"
+ksp = "2.1.0-1.0.29"
 native-image = "0.10.4"
 okio = "3.9.1"
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-plugin-allopen = { id = "org.jetbrains.kotlin.plugin.allopen", version.ref = "kotlin" }
 kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 native-image = { id = "org.graalvm.buildtools.native", version.ref = "native-image" }
 
 [libraries]
@@ -21,9 +24,11 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
 kotlin-wrappers-node = { module = "org.jetbrains.kotlin-wrappers:kotlin-node", version = "22.5.5-pre.854" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
 kotlinx-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
 kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+ksp = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "ksp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 [bundles]

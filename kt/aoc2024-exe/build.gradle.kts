@@ -1,3 +1,4 @@
+import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 plugins {
@@ -99,7 +100,7 @@ kotlin {
 
     val detektTaskNames = targets.flatMap { target ->
         target.compilations.map { compilation ->
-            "detekt${target.targetName.capitalize()}${compilation.compilationName.capitalize()}"
+            "detekt${target.targetName.capitalized()}${compilation.compilationName.capitalized()}"
         }
     }
     tasks.check {

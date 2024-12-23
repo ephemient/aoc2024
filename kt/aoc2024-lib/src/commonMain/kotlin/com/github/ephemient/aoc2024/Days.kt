@@ -5,7 +5,7 @@ expect val days: List<Day>
 data class Day(
     val day: Int,
     val parts: Int,
-    val solver: (String) -> List<suspend () -> Any?>,
+    val solver: (String) -> (List<suspend () -> Any?>),
     val name: String = day.toString(),
 )
 
@@ -14,9 +14,19 @@ fun <T> Day(
     create: (String) -> T,
     vararg parts: suspend (T) -> Any?,
     name: String = day.toString(),
-): Day = Day(
-    day = day,
-    parts = parts.size,
-    solver = { with(create(it)) { parts.map { suspend { it.invoke(this) } } } },
-    name = name,
-)
+): Day {
+    val size = parts.size
+    return Day(
+        day = day,
+        parts = size,
+        solver = solver@{
+            val solver = try {
+                create(it)
+            } catch (e: AssertionError) {
+                return@solver List(size) { { "SKIPPED" } }
+            }
+            parts.map { suspend { it.invoke(solver) } }
+        },
+        name = name,
+    )
+}

@@ -1,6 +1,8 @@
 package com.github.ephemient.aoc2024
 
-class Day17(input: String) {
+class Day17 internal constructor(input: String, machine: (IntList) -> Machine) {
+    constructor(input: String) : this(input, ::MachineImpl)
+
     private val a: Long
     private val b: Long
     private val c: Long
@@ -19,39 +21,9 @@ class Day17(input: String) {
         this.b = b
         this.c = c
     }
+    private val machine = machine(program)
 
-    fun part1(a: Long = this.a, b: Long = this.b, c: Long = this.c) = IntList().apply {
-        var a = a
-        var b = b
-        var c = c
-        var ip = 0
-        while (ip in program.indices) {
-            val instruction = program[ip]
-            val operand = program[ip + 1]
-            val combo = when (operand) {
-                in 0..3 -> operand
-                4L -> a
-                5L -> b
-                6L -> c
-                else -> TODO()
-            }
-            when (instruction) {
-                0L -> a = a shr combo.toInt()
-                1L -> b = b xor operand
-                2L -> b = combo and 7
-                3L -> if (a != 0L) {
-                    ip = operand.toInt()
-                    continue
-                }
-                4L -> b = b xor c
-                5L -> add(combo and 7L)
-                6L -> b = a shr combo.toInt()
-                7L -> c = a shr combo.toInt()
-                else -> TODO()
-            }
-            ip += 2
-        }
-    }
+    fun part1() = machine(a, b, c)
 
     fun part2(): Long {
         var candidates = listOf(0L)
@@ -59,7 +31,7 @@ class Day17(input: String) {
             candidates = buildList {
                 for (base in candidates) {
                     for (a in 8 * base..8 * base + 7) {
-                        val output = part1(a)
+                        val output = machine(a, b, c)
                         if (program == output) return a
                         if (output.size < program.size &&
                             output == program.subList(program.size - output.size, program.size)
@@ -104,6 +76,45 @@ class Day17(input: String) {
         }
 
         override fun toString(): String = indices.joinToString(",") { this[it].toString() }
+    }
+
+    interface Machine {
+        operator fun invoke(a: Long, b: Long, c: Long): IntList
+    }
+
+    private class MachineImpl(private val program: IntList) : Machine {
+        override fun invoke(a: Long, b: Long, c: Long) = IntList().apply {
+            var a = a
+            var b = b
+            var c = c
+            var ip = 0
+            while (ip in program.indices) {
+                val instruction = program[ip]
+                val operand = program[ip + 1]
+                val combo = when (operand) {
+                    in 0..3 -> operand
+                    4L -> a
+                    5L -> b
+                    6L -> c
+                    else -> TODO()
+                }
+                when (instruction) {
+                    0L -> a = a shr combo.toInt()
+                    1L -> b = b xor operand
+                    2L -> b = combo and 7
+                    3L -> if (a != 0L) {
+                        ip = operand.toInt()
+                        continue
+                    }
+                    4L -> b = b xor c
+                    5L -> add(combo and 7L)
+                    6L -> b = a shr combo.toInt()
+                    7L -> c = a shr combo.toInt()
+                    else -> TODO()
+                }
+                ip += 2
+            }
+        }
     }
 
     companion object {

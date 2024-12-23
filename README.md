@@ -27,3 +27,4 @@ Development occurs in language-specific directories:
 |[Day20.hs](hs/src/Day20.hs)|[Day20.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day20.kt)|[day20.py](py/aoc2024/day20.py)|[day20.rs](rs/src/day20.rs)|
 |[Day21.hs](hs/src/Day21.hs)|[Day21.kt](kt/aoc2024-lib/src/jvmCodegen/kotlin/com/github/ephemient/aoc2024/codegen/Day21.kt)|[day21.py](py/aoc2024/day21.py)|[day21.rs](rs/src/day21.rs)|
 |[Day22.hs](hs/src/Day22.hs)|[Day22.kt](kt/aoc2024-lib/src/commonMain/kotlin/com/github/ephemient/aoc2024/Day22.kt)|[day22.py](py/aoc2024/day22.py)|[day22.rs](rs/src/day22.rs)|
+|[Day23.hs](hs/src/Day23.hs)||||

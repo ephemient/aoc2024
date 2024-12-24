@@ -4,10 +4,10 @@ module Day24Spec (spec) where
 
 import Data.Text (Text)
 import Data.Text qualified as T (unlines)
-import Day24 (part1)
-import Test.Hspec (Spec, describe, it, shouldBe)
+import Day24 (part1, part2)
+import Test.Hspec (Spec, describe, it, shouldBe, xit)
 
-example1, example2 :: Text
+example1, example2, example3 :: Text
 example1 =
   T.unlines
     [ "x00: 1",
@@ -71,6 +71,28 @@ example2 =
       "tgd XOR rvg -> z12",
       "tnw OR pbm -> gnj"
     ]
+example3 =
+  T.unlines
+    [ "x00: 0",
+      "x01: 1",
+      "x02: 0",
+      "x03: 1",
+      "x04: 0",
+      "x05: 1",
+      "y00: 0",
+      "y01: 0",
+      "y02: 1",
+      "y03: 1",
+      "y04: 0",
+      "y05: 1",
+      "",
+      "x00 AND y00 -> z05",
+      "x01 AND y01 -> z02",
+      "x02 AND y02 -> z01",
+      "x03 AND y03 -> z03",
+      "x04 AND y04 -> z04",
+      "x05 AND y05 -> z00"
+    ]
 
 spec :: Spec
 spec = do
@@ -78,3 +100,6 @@ spec = do
     it "examples" $ do
       part1 example1 `shouldBe` Right (Just 4)
       part1 example2 `shouldBe` Right (Just 2024)
+  describe "part 1" $ do
+    xit "examples" $ do
+      part2 example3 `shouldBe` Right (Just "z00,z01,z02,z05")

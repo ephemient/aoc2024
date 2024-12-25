@@ -38,6 +38,7 @@ library
     Day22
     Day23
     Day24
+    Day25
     Day3
     Day4
     Day5
@@ -102,6 +103,7 @@ test-suite aoc2024-test
     Day22Spec
     Day23Spec
     Day24Spec
+    Day25Spec
     Day2Spec
     Day3Spec
     Day4Spec

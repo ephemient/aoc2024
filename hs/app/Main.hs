@@ -27,6 +27,7 @@ import Day21 qualified (solve)
 import Day22 qualified (part1, part2)
 import Day23 qualified (part1, part2)
 import Day24 qualified (part1, part2)
+import Day25 qualified (part1)
 import Day3 qualified (part1, part2)
 import Day4 qualified (part1, part2)
 import Day5 qualified (part1, part2)
@@ -81,5 +82,6 @@ main = do
   run 22 (either fail print) [Day22.part1, Day22.part2]
   run 23 putStrLn [show . Day23.part1, T.unpack . Day23.part2]
   run 24 (either (fail . errorBundlePretty) (maybe (fail "error") putStrLn)) [fmap2 show . Day24.part1, fmap2 T.unpack . Day24.part2]
+  run 25 print [Day25.part1]
   where
     fmap2 = fmap . fmap

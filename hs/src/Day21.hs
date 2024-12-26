@@ -3,6 +3,7 @@
 -- Description:    <https://adventofcode.com/2024/day/21 Day 21: Keypad Conundrum>
 module Day21 (solve) where
 
+import Control.Exception (assert)
 import Data.Array.Unboxed (UArray, listArray, range, (!))
 import Data.Char (digitToInt, isDigit)
 import Data.Function (on)
@@ -33,6 +34,7 @@ luts =
     move (x, y) (0, -1) = (x - 1, y)
     move (x, y) (1, -1) = (x, y - 1)
     move (x, y) (2, -1) = (x + 1, y)
+    move pos _ = assert False pos
 
 solve :: Int -> Text -> Int
 solve depth input = sum [cost (T.unpack line) * T.foldl' accumDigits 0 line | line <- T.lines input]

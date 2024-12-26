@@ -1,45 +1,60 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 -- |
 -- Module:         Day6
 -- Description:    <https://adventofcode.com/2024/day/6 Day 6: Guard Gallivant>
 module Day6 (part1, part2) where
 
 import Control.Monad (ap)
-import Control.Parallel.Strategies (parMap, rseq)
+import Control.Parallel.Strategies (parList, rseq, withStrategy)
 import Data.Containers.ListUtils (nubOrd)
 import Data.List ((\\))
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (catMaybes, isJust)
-import Data.Set qualified as Set (empty, insert, member)
+import Data.Semigroup (Max (Max), sconcat)
+import Data.Set (Set)
+import Data.Set qualified as Set (empty, insert, member, singleton)
 import Data.Text (Text)
-import Data.Text qualified as T (concat, drop, index, length, lines, take, unpack)
+import Data.Text qualified as T (lines, unpack)
 
-visited :: [Text] -> (Int, Int) -> [((Int, Int), (Int, Int))]
-visited g pos0 = catMaybes $ takeWhile isJust $ iterate (>>= step) $ Just (pos0, (-1, 0))
+parse :: Text -> ((Int, Int), Set (Int, Int), [(Int, Int)])
+parse input = ((maxY, maxX), blocks, start)
+  where
+    (Max maxY, Max maxX, (blocks, start)) =
+      sconcat $
+        (Max 0, Max 0, mempty)
+          :| [ ( Max y,
+                 Max x,
+                 case char of
+                   '^' -> (mempty, [(y, x)])
+                   '#' -> (Set.singleton (y, x), mempty)
+                   _ -> mempty
+               )
+             | (y, line) <- zip [0 ..] $ T.lines input,
+               (x, char) <- zip [0 ..] $ T.unpack line
+             ]
+
+visited :: (Int, Int) -> Set (Int, Int) -> (Int, Int) -> [((Int, Int), (Int, Int))]
+visited (maxY, maxX) blocks start = catMaybes $ takeWhile isJust $ iterate (>>= step) $ Just (start, (-1, 0))
   where
     step (pos@(y, x), d@(dy, dx))
-      | y' < 0 || length g <= y' || x' < 0 || T.length line <= x' = Nothing
-      | line `T.index` x' == '#' = step (pos, (dx, -dy))
+      | y' < 0 || maxY < y' || x' < 0 || maxX < x' = Nothing
+      | (y', x') `Set.member` blocks = step (pos, (dx, -dy))
       | otherwise = Just ((y', x'), d)
       where
         y' = y + dy
         x' = x + dx
-        line = g !! y'
 
 part1 :: Text -> Int
-part1 input = length $ nubOrd $ fst <$> visited g pos0
+part1 input = length $ nubOrd $ map fst $ start >>= visited maxes blocks
   where
-    g = T.lines input
-    [pos0] = [(y, x) | (y, line) <- zip [0 ..] g, (x, '^') <- zip [0 ..] $ T.unpack line]
+    (maxes, blocks, start) = parse input
 
 part2 :: Text -> Int
 part2 input =
-  length . filter id . parMap rseq isLoop $
-    [ above ++ T.concat [T.take x line, "#", T.drop (x + 1) line] : below
-    | (y, x) <- nubOrd (fst <$> visited g pos0) \\ [pos0],
-      let (above, line : below) = splitAt y g
+  length . filter id . withStrategy (parList rseq) $
+    [ isLoop (Set.insert add blocks) pos0
+    | pos0 <- start,
+      add <- nubOrd (fst <$> visited maxes blocks pos0) \\ [pos0]
     ]
   where
-    g = T.lines input
-    [pos0] = [(y, x) | (y, line) <- zip [0 ..] g, (x, '^') <- zip [0 ..] $ T.unpack line]
-    isLoop g' = any (uncurry Set.member) $ zip `ap` scanl (flip Set.insert) Set.empty $ visited g' pos0
+    (maxes, blocks, start) = parse input
+    isLoop blocks' pos0 = any (uncurry Set.member) $ zip `ap` scanl (flip Set.insert) Set.empty $ visited maxes blocks' pos0

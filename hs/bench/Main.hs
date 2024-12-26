@@ -194,6 +194,6 @@ main =
       env (getDayInput 24) $ \input ->
         bgroup
           "Day 25"
-          [ bench "part 2" $ nf Day25.part1 input
+          [ bench "part 1" $ nf Day25.part1 input
           ]
     ]

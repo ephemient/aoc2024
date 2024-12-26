@@ -1,5 +1,11 @@
+import com.google.devtools.ksp.gradle.KspAATask
+import com.google.devtools.ksp.gradle.KspTaskNative
+import org.gradle.internal.extensions.stdlib.capitalized
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.detekt)
 }
 
@@ -73,7 +79,7 @@ kotlin {
 
     val detektTaskNames = targets.flatMap { target ->
         target.compilations.map { compilation ->
-            "detekt${target.targetName.capitalize()}${compilation.compilationName.capitalize()}"
+            "detekt${target.targetName.capitalized()}${compilation.compilationName.capitalized()}"
         }
     }
     tasks.check {
@@ -142,9 +148,16 @@ for ((name, base, usage) in listOf(
 }
 
 dependencies {
+    kotlin.targets.all { if (this !is KotlinMetadataTarget) "ksp${name.capitalized()}"(projects.processor) }
     detektPlugins(libs.bundles.detekt.plugins)
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+afterEvaluate {
+    // Workaround for https://github.com/google/ksp/issues/2267
+    tasks.withType<KspAATask>().configureEach { setOnlyIf(Specs.satisfyAll()) }
+    tasks.withType<KspTaskNative>().configureEach { setOnlyIf(Specs.satisfyAll()) }
 }

@@ -23,7 +23,9 @@ val benchmarkRun by tasks.registering(JavaExec::class) {
     mainClass = "org.openjdk.jmh.Main"
     classpath(benchmark.output, benchmark.runtimeClasspath)
     args("-f", 0, "-wi", 1, "-w", "0s", "-r", "0s", "-bm", "avgt", "-tu", "us", "-i", 1)
-    args("-rf", "json", "-rff", "/dev/null")
+    args("-rf", "json", "-rff", "/dev/null", "-e", "jvm")
+    project.findProperty("benchmarkExclude")?.let { args("-e", it) }
+    project.findProperty("benchmarkInclude")?.let { args(it) }
     outputs.dir(AgentConfigurationFactory.getAgentOutputDirectoryForTask(layout, name))
 }
 val syncBenchmarkRunMetadata by tasks.registering(Sync::class) {
@@ -43,9 +45,9 @@ graalvmNative {
             classpath(syncBenchmarkRunMetadata, benchmark.output, benchmark.runtimeClasspath)
             runtimeArgs("-f", 0, "-wi", 1, "-w", "1s", "-r", "1s", "-bm", "avgt", "-tu", "us")
             val benchmarkFile = benchmarkDir.get().file("graalvmBench.json")
-            runtimeArgs("-rf", "json", "-rff", benchmarkFile.asFile)
-            findProperty("benchmarkExclude")?.let { runtimeArgs("-e", it) }
-            findProperty("benchmarkInclude")?.let { runtimeArgs(it) }
+            runtimeArgs("-rf", "json", "-rff", benchmarkFile.asFile, "-e", "jvm")
+            project.findProperty("benchmarkExclude")?.let { runtimeArgs("-e", it) }
+            project.findProperty("benchmarkInclude")?.let { runtimeArgs(it) }
         }
     }
     agent {

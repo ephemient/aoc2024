@@ -71,6 +71,12 @@ kotlin {
             group("nonblocking") {
                 withWasmJs()
             }
+            group("nonJvm") {
+                group("native") {
+                    withNative()
+                }
+                withWasmJs()
+            }
         }
     }
 

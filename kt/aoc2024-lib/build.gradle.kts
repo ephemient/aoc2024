@@ -15,6 +15,7 @@ kotlin {
         val runCodegen by tasks.registering(JavaExec::class) {
             mainClass = "com.github.ephemient.aoc2024.codegen.Main"
             classpath(codegen.output.allOutputs, codegen.runtimeDependencyFiles)
+            outputs.cacheIf(Specs.satisfyAll())
             outputs.dir(layout.buildDirectory.dir("build/sources/codegen"))
             argumentProviders.add { listOf(outputs.files.singleFile.path) }
         }

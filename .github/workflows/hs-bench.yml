@@ -73,7 +73,8 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: ghc-9.12
-          path: aoc2024-bench-9.12.html
+          path: ghc-9.12
+      - run: mv ghc-9.12/aoc2024-bench.html aoc2024-bench-9.12.html
       - run: |
           git add aoc2024-bench.html aoc2024-bench-9.12.html
           git commit -m 'Haskell Criterion ${{ github.sha }}'

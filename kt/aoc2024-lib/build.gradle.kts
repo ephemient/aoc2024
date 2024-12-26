@@ -62,6 +62,12 @@ kotlin {
             }
         }
 
+        jvmMain {
+            dependencies {
+                implementation(libs.asm)
+            }
+        }
+
         jvmTest {
             dependencies {
                 implementation(kotlin("test-junit5"))

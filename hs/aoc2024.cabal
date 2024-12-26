@@ -52,7 +52,7 @@ library
 
   build-depends:
     array ^>=0.5.7.0,
-    base ^>=4.20.0.0,
+    base >=4.20 && <4.22,
     containers ^>=0.7,
     heap ^>=1.0.4,
     megaparsec ^>=9.7.0,
@@ -70,8 +70,8 @@ executable aoc2024
   c-sources: app/cbits/main.c
   build-depends:
     aoc2024,
-    base ^>=4.20.0.0,
-    filepath ^>=1.5.2.0,
+    base >=4.20 && <4.22,
+    filepath >=1.5.2.0 && <1.6,
     megaparsec ^>=9.7.0,
     text ^>=2.1.1,
 
@@ -115,7 +115,7 @@ test-suite aoc2024-test
 
   build-depends:
     aoc2024,
-    base ^>=4.20.0.0,
+    base >=4.20 && <4.22,
     hspec ^>=2.11.10,
     text ^>=2.1.1,
 
@@ -137,9 +137,9 @@ benchmark aoc2024-bench
   c-sources: bench/cbits/main.c
   build-depends:
     aoc2024,
-    base ^>=4.20.0.0,
+    base >=4.20 && <4.22,
     criterion ^>=1.6.4.0,
-    filepath ^>=1.5.2.0,
+    filepath >=1.5.2.0 && <1.6,
     text ^>=2.1.1,
 
   ghc-options:

@@ -34,7 +34,7 @@ fun day21(outputDir: Path, className: ClassName = ClassName("com.github.ephemien
                         .build()
                 )
                 .addFunctions(
-                    arrayOf(IndexedValue(2, "part1"), IndexedValue(25, "part2")).map { (depth, name) ->
+                    arrayOf("part1", "part2").map { name ->
                         FunSpec.builder(name)
                             .returns(LONG)
                             .beginControlFlow("return %N.%M", "lines", MemberName("kotlin.collections", "sumOf"))

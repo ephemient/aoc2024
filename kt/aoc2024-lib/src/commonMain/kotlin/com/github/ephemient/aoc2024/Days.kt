@@ -22,7 +22,7 @@ fun <T> Day(
         solver = solver@{
             val solver = try {
                 create(it)
-            } catch (e: AssertionError) {
+            } catch (_: AssertionError) {
                 return@solver List(size) { { "SKIPPED" } }
             }
             parts.map { suspend { it.invoke(solver) } }

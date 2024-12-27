@@ -11,6 +11,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -34,8 +35,8 @@ class DaysProcessor(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         resolver.getNewFiles()
-            .flatMap { it.declarations }
-            .mapNotNullTo(days) { declaration ->
+            .flatMap { it.declarations.map(it::to) }
+            .mapNotNullTo(days) { (source, declaration) ->
                 if (
                     declaration !is KSClassDeclaration ||
                     !declaration.isPublic() ||
@@ -46,6 +47,7 @@ class DaysProcessor(
                     val (name, day) = match.destructured
                     val typeName = declaration.toClassName()
                     Day(
+                        source = source,
                         day = day.toInt(),
                         name = name,
                         typeName = typeName,
@@ -111,10 +113,11 @@ class DaysProcessor(
                     .build()
             )
             .build()
-            .writeTo(codeGenerator, Dependencies.ALL_FILES)
+            .writeTo(codeGenerator, Dependencies(aggregating = true, sources = Array(days.size) { days[it].source }))
     }
 
     private data class Day(
+        val source: KSFile,
         val day: Int,
         val name: String,
         val typeName: TypeName,

@@ -52,12 +52,14 @@ library
 
   build-depends:
     array ^>=0.5.7.0,
+    async ^>=2.2.5,
     base >=4.20 && <4.22,
     containers ^>=0.7,
     heap ^>=1.0.4,
     megaparsec ^>=9.7.0,
     parallel ^>=3.2.2.0,
     split ^>=0.2.5,
+    stm ^>=2.5.3.1,
     text ^>=2.1.2,
     vector ^>=0.13.2.0,
 

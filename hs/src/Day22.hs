@@ -3,20 +3,22 @@
 -- Description:    <https://adventofcode.com/2024/day/22 Day 22: Monkey Market>
 module Day22 (part1, part2) where
 
-import Common (readMany)
-import Control.Monad.ST (ST, runST)
-import Control.Monad.ST.Unsafe (unsafeInterleaveST)
-import Control.Parallel.Strategies (parList, rseq, withStrategy)
-import Data.Array.ST (Ix, MArray (newArray), STUArray, modifyArray', readArray, writeArray)
-import Data.Bits (bit, shiftL, shiftR, testBit, xor, (.&.))
+import Common (readMany, readSome)
+import Control.Concurrent.Async (forConcurrently)
+import Control.Concurrent.STM (TArray, atomically)
+import Data.Array.IO (IOUArray)
+import Data.Array.MArray (newArray, readArray, writeArray)
+import Data.Bits (Bits, bit, shiftL, shiftR, testBit, xor, (.&.))
 import Data.Foldable (Foldable (foldMap'))
+import Data.Functor (($>))
 import Data.List (tails)
-import Data.Semigroup (Max (Max, getMax))
+import Data.Semigroup (Max (Max, getMax), sconcat)
 import Data.Text (Text)
 import Data.Text.Read qualified as T (decimal)
 import Data.Vector.Unboxed qualified as V (generate, (!))
+import System.IO.Unsafe (unsafePerformIO)
 
-step :: Int -> Int
+step :: (Bits a, Num a) => a -> a
 step num = num3
   where
     num1 = (num `xor` num `shiftL` 6) .&. 16777215
@@ -32,21 +34,21 @@ part1 input = do
 
 part2 :: Text -> Either String Int
 part2 input = do
-  (nums, _) <- readMany T.decimal input
-  pure $ runST $ do
-    acc <- newSTUArray ((-9, -9, -9, -9), (9, 9, 9, 9)) 0
-    let f num = do
-          seen <- newSTUArray ((-9, -9, -9, -9), (9, 9, 9, 9)) False
-          let prices = map (`mod` 10) $ take 2001 $ iterate step num
-              g (key, price) =
-                readArray seen key >>= \case
+  (nums, _) <- readSome T.decimal input
+  maybe (Left "error") (Right . getMax) $ sconcat $ unsafePerformIO $ do
+    acc <- newArray @TArray bounds 0
+    forConcurrently nums $ \num -> do
+      seen <- newArray @IOUArray bounds False
+      let f (a : b : c : d : e : _) =
+            let key = (a - b, b - c, c - d, d - e)
+             in readArray seen key >>= \case
                   True -> pure Nothing
                   False -> do
                     writeArray seen key True
-                    modifyArray' acc key (+ price)
-                    Just . Max <$> readArray acc key
-          foldMap' g [((a - b, b - c, c - d, d - e), e) | a : b : c : d : e : _ <- tails prices]
-    maybe 0 getMax . mconcat . withStrategy (parList rseq) <$> mapM (unsafeInterleaveST . f) nums
+                    atomically $ do
+                      total <- (+) e <$> readArray acc key
+                      writeArray acc key total $> Just (Max total)
+          f _ = pure Nothing
+      foldMap' f (tails $ take 2001 $ map (`mod` 10) $ iterate step num)
   where
-    newSTUArray :: forall s i e. (Ix i, MArray (STUArray s) e (ST s)) => (i, i) -> e -> ST s (STUArray s i e)
-    newSTUArray = newArray
+    bounds = ((-9, -9, -9, -9), (9, 9, 9, 9))

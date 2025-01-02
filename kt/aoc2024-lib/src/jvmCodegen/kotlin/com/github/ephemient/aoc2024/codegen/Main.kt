@@ -13,4 +13,5 @@ fun main(argv: Array<String>) {
     outputDir.deleteRecursively()
     Files.createDirectory(outputDir)
     day21(outputDir)
+    day22(outputDir)
 }

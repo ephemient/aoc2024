@@ -4,12 +4,17 @@
 module Day22 (part1, part2) where
 
 import Common (readMany)
+import Control.Monad.ST (ST, runST)
+import Control.Monad.ST.Unsafe (unsafeInterleaveST)
 import Control.Parallel.Strategies (parList, rseq, withStrategy)
-import Data.Bits (shiftL, shiftR, xor, (.&.))
-import Data.IntMap.Strict qualified as IntMap (fromListWith, null, unionsWith)
+import Data.Array.ST (Ix, MArray (newArray), STUArray, modifyArray', readArray, writeArray)
+import Data.Bits (bit, shiftL, shiftR, testBit, xor, (.&.))
+import Data.Foldable (Foldable (foldMap'))
 import Data.List (tails)
+import Data.Semigroup (Max (Max, getMax))
 import Data.Text (Text)
 import Data.Text.Read qualified as T (decimal)
+import Data.Vector.Unboxed qualified as V (generate, (!))
 
 step :: Int -> Int
 step num = num3
@@ -20,21 +25,28 @@ step num = num3
 
 part1 :: Text -> Either String Int
 part1 input = do
-  (nums, _) <- readMany T.decimal input
-  pure $ sum $ withStrategy (parList rseq) [iterate step num !! 2000 | num <- nums]
+  (nums, _) <- readMany @Int T.decimal input
+  pure $ sum [foldl' xor 0 [constants V.! i | i <- [0 .. 23], testBit num i] | num <- nums]
+  where
+    constants = V.generate 24 $ (!! 2000) . iterate step . bit
 
 part2 :: Text -> Either String Int
 part2 input = do
   (nums, _) <- readMany T.decimal input
-  let results =
-        IntMap.unionsWith (+) . withStrategy (parList rseq) $
-          [ IntMap.fromListWith (const id) $
-              [ (((a * 19 + b) * 19 + c) * 19 + d, price)
-              | (a : b : c : d : _, price) <- zip (tails deltas) $ drop 4 prices
-              ]
-          | num <- nums,
-            let secrets = take 2001 $ iterate step num
-                prices = map (`mod` 10) secrets
-                deltas = zipWith (-) prices $ drop 1 prices
-          ]
-  pure $ if IntMap.null results then 0 else maximum results
+  pure $ runST $ do
+    acc <- newSTUArray ((-9, -9, -9, -9), (9, 9, 9, 9)) 0
+    let f num = do
+          seen <- newSTUArray ((-9, -9, -9, -9), (9, 9, 9, 9)) False
+          let prices = map (`mod` 10) $ take 2001 $ iterate step num
+              g (key, price) =
+                readArray seen key >>= \case
+                  True -> pure Nothing
+                  False -> do
+                    writeArray seen key True
+                    modifyArray' acc key (+ price)
+                    Just . Max <$> readArray acc key
+          foldMap' g [((a - b, b - c, c - d, d - e), e) | a : b : c : d : e : _ <- tails prices]
+    maybe 0 getMax . mconcat . withStrategy (parList rseq) <$> mapM (unsafeInterleaveST . f) nums
+  where
+    newSTUArray :: forall s i e. (Ix i, MArray (STUArray s) e (ST s)) => (i, i) -> e -> ST s (STUArray s i e)
+    newSTUArray = newArray

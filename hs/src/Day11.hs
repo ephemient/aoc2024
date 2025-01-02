@@ -5,12 +5,11 @@
 -- Description:    <https://adventofcode.com/2024/day/11 Day 11: Plutonian Pebbles>
 module Day11 (part1, part2, solve) where
 
-import Common (readEntire)
+import Common (readMany)
 import Data.IntMap (IntMap)
 import Data.IntMap qualified as IntMap (toList)
 import Data.IntMap.Strict qualified as IntMap (fromListWith)
 import Data.Text (Text)
-import Data.Text qualified as T (words)
 import Data.Text.Read qualified as T (decimal)
 
 part1, part2 :: Text -> Either String Int
@@ -19,7 +18,7 @@ part2 = solve 75
 
 solve :: Int -> Text -> Either String Int
 solve n input = do
-  nums <- mapM (readEntire T.decimal) $ T.words input
+  (nums, _) <- readMany T.decimal input
   pure $ foldl' (+) 0 $ iterate step (IntMap.fromListWith (+) $ (,1) <$> nums) !! n
 
 step :: IntMap Int -> IntMap Int

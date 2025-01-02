@@ -3,17 +3,17 @@
 -- Description:    <https://adventofcode.com/2024/day/2 Day 2: Red-Nosed Reports>
 module Day2 (part1, part2) where
 
-import Common (readEntire)
+import Common (readEntire, readMany)
 import Control.Monad (ap, foldM_, guard)
 import Data.Functor (($>))
 import Data.List (inits, tails)
 import Data.Maybe (isJust)
 import Data.Text (Text)
-import Data.Text qualified as T (lines, words)
+import Data.Text qualified as T (lines)
 import Data.Text.Read qualified as T (decimal)
 
 parse :: Text -> Either String [[Int]]
-parse = mapM (mapM (readEntire T.decimal) . T.words) . T.lines
+parse = mapM (readEntire $ readMany T.decimal) . T.lines
 
 isSafe1, isSafe2 :: [Int] -> Bool
 isSafe1 = isJust . foldM_ go EQ . (zipWith (-) `ap` drop 1)

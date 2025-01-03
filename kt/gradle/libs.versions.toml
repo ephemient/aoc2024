@@ -24,7 +24,7 @@ asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
-kotlin-wrappers-node = { module = "org.jetbrains.kotlin-wrappers:kotlin-node", version = "22.5.5-pre.855" }
+kotlin-wrappers-node = { module = "org.jetbrains.kotlin-wrappers:kotlin-node", version = "22.10.2-pre.858" }
 kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
 kotlinx-benchmark = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }

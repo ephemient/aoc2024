@@ -1,5 +1,5 @@
 use std::collections::BTreeSet;
-use std::iter::{once, successors};
+use std::iter::once;
 
 use itertools::Itertools;
 
@@ -51,7 +51,7 @@ pub fn part1(data: &str) -> usize {
 }
 
 pub fn part2(data: &str) -> usize {
-    solve(data, successors(Some(0), |i| Some(i + 1)))
+    solve(data, 0..)
 }
 
 #[cfg(test)]

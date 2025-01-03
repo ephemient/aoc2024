@@ -1,6 +1,5 @@
 use std::array;
 use std::collections::{BTreeMap, BTreeSet};
-use std::iter::once;
 
 fn parse(data: &str) -> [BTreeSet<(usize, usize)>; 10] {
     let mut elevations = array::from_fn(|_| BTreeSet::new());
@@ -62,7 +61,7 @@ where
 pub fn part1(data: &str) -> usize {
     solve(
         data,
-        |point| once(point).collect::<BTreeSet<_>>(),
+        |point| -> BTreeSet<_> { [point].into() },
         |x, y| x.union(y).copied().collect(),
     )
     .map(|value| value.len())

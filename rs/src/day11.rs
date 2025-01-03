@@ -2,15 +2,15 @@ use std::collections::BTreeMap;
 use std::num::ParseIntError;
 
 pub fn part1(data: &str) -> Result<u64, ParseIntError> {
-    solve(data, 25)
+    solve::<25>(data)
 }
 
 pub fn part2(data: &str) -> Result<u64, ParseIntError> {
-    solve(data, 75)
+    solve::<75>(data)
 }
 
-fn solve(data: &str, n: usize) -> Result<u64, ParseIntError> {
-    Ok((0..n)
+fn solve<const N: usize>(data: &str) -> Result<u64, ParseIntError> {
+    Ok((0..N)
         .fold(
             {
                 let mut counts = BTreeMap::<u64, u64>::new();
@@ -58,8 +58,8 @@ mod tests {
 
     #[test]
     fn part1_examples() {
-        assert_eq!(Ok(7), solve(EXAMPLE_1, 1));
-        assert_eq!(Ok(22), solve(EXAMPLE_2, 6));
-        assert_eq!(Ok(55312), solve(EXAMPLE_2, 25));
+        assert_eq!(Ok(7), solve::<1>(EXAMPLE_1));
+        assert_eq!(Ok(22), solve::<6>(EXAMPLE_2));
+        assert_eq!(Ok(55312), solve::<25>(EXAMPLE_2));
     }
 }

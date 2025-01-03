@@ -176,8 +176,8 @@ fn main() -> anyhow::Result<()> {
     if args.is_empty() || args.contains("20") {
         println!("Day 20");
         let data = get_day_input(20)?;
-        println!("{:?}", day20::part1(&data));
-        println!("{}", day20::part2(&data));
+        println!("{:?}", day20::part1(&data).ok_or(anyhow!("None"))?);
+        println!("{}", day20::part2(&data).ok_or(anyhow!("None"))?);
         println!();
     }
 

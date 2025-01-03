@@ -6,8 +6,6 @@ import kotlinx.benchmark.Blackhole
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 
 @State(Scope.Benchmark)
 class Day6Bench {
@@ -22,12 +20,12 @@ class Day6Bench {
     fun part1() = Day6(input).part1()
 
     @Benchmark
-    fun part2() = runBlocking(Dispatchers.Default) {
+    fun part2() = runBlockingBenchmark {
         Day6(input).part2()
     }
 
     @Benchmark
-    fun solve(bh: Blackhole) = runBlocking(Dispatchers.Default) {
+    fun solve(bh: Blackhole) = runBlockingBenchmark {
         val day6 = Day6(input)
         bh.consume(day6.part1())
         bh.consume(day6.part2())

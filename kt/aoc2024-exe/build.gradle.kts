@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.plugin.allopen)
+    alias(libs.plugins.atomicfu)
     alias(libs.plugins.detekt)
     alias(libs.plugins.kotlinx.benchmark)
     distribution

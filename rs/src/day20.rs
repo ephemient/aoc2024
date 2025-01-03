@@ -1,19 +1,17 @@
-use std::collections::BTreeMap;
-use std::iter;
+use itertools::Itertools;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-use if_chain::if_chain;
-
-pub fn part1(data: &str) -> usize {
+pub fn part1(data: &str) -> Option<usize> {
     solve(data, 2, 100)
 }
 
-pub fn part2(data: &str) -> usize {
+pub fn part2(data: &str) -> Option<usize> {
     solve(data, 20, 100)
 }
 
-fn solve(data: &str, cheats: usize, time: usize) -> usize {
+fn solve(data: &str, cheats: usize, time: usize) -> Option<usize> {
     let lines = data.lines().collect::<Vec<_>>();
-    lines
+    let start = lines
         .iter()
         .enumerate()
         .flat_map(|(y, line)| {
@@ -21,60 +19,50 @@ fn solve(data: &str, cheats: usize, time: usize) -> usize {
                 .enumerate()
                 .filter_map(move |(x, b)| Some((y, x)).filter(|_| b == b'S'))
         })
-        .flat_map(|start| {
-            let lines = lines.clone();
-            let mut queue: Vec<(_, BTreeMap<_, _>)> = vec![(start, [(start, 0)].into())];
-            iter::from_fn(move || {
-                while let Some(((y, x), path)) = queue.pop() {
-                    match lines[y].as_bytes()[x] {
-                        b'E' => {
-                            return Some(
-                                path.iter()
-                                    .map(|(key, value)| (*key, *value))
-                                    .collect::<Vec<_>>(),
-                            )
-                        }
-                        _ => {
-                            for pos @ (y, x) in [
-                                (y.wrapping_sub(1), x),
-                                (y, x.wrapping_sub(1)),
-                                (y, x + 1),
-                                (y + 1, x),
-                            ] {
-                                if_chain! {
-                                    if !path.contains_key(&pos);
-                                    if let Some(line) = lines.get(y);
-                                    if let Some(b) = line.as_bytes().get(x);
-                                    if *b != b'#';
-                                    then {
-                                        let mut path = path.clone();
-                                        path.insert(pos, path.len());
-                                        queue.push((pos, path));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                None
+        .exactly_one()
+        .ok()?;
+    let mut path = vec![(start, 0)];
+    loop {
+        let prev = path.iter().nth_back(1).map(|(pos, _)| pos);
+        let (pos, b) = path
+            .last()
+            .iter()
+            .flat_map(|((y, x), _)| {
+                [
+                    (y.wrapping_sub(1), *x),
+                    (*y, x.wrapping_sub(1)),
+                    (*y, x.wrapping_add(1)),
+                    (y.wrapping_add(1), *x),
+                ]
             })
-        })
-        .map(|path| {
-            path.iter()
-                .enumerate()
-                .map(|(i, ((y1, x1), t1))| {
-                    path[i + 1..]
-                        .iter()
-                        .take_while(|(pos, _)| *pos <= (y1 + cheats, *x1))
-                        .filter(|((y2, x2), t2)| {
-                            let distance = y1.abs_diff(*y2) + x1.abs_diff(*x2);
-                            distance <= cheats && distance + time <= t1.abs_diff(*t2)
-                        })
-                        .count()
-                })
-                .sum::<usize>()
-        })
-        .sum()
+            .map(|pos @ (y, x)| (pos, lines.get(y).map(|line| line.as_bytes().get(x))))
+            .filter(|(pos, b)| Some(pos) != prev && b != &Some(Some(&b'#')))
+            .exactly_one()
+            .ok()?;
+        path.push((pos, path.len()));
+        if b == Some(Some(&b'E')) {
+            break;
+        }
+    }
+    path.sort_unstable();
+    Some(
+        path.par_iter()
+            .map(|((y1, x1), i)| {
+                path[path
+                    .binary_search(&((y1.saturating_sub(cheats), *x1), 0))
+                    .unwrap_or_else(|j| j)
+                    ..path
+                        .binary_search(&((y1.saturating_add(cheats), x1 + 1), 0))
+                        .unwrap_or_else(|j| j)]
+                    .iter()
+                    .filter(|((y2, x2), j)| {
+                        let d = y1.abs_diff(*y2) + x1.abs_diff(*x2);
+                        d <= cheats && i + d + time <= *j
+                    })
+                    .count()
+            })
+            .sum(),
+    )
 }
 
 #[cfg(test)]
@@ -119,7 +107,7 @@ mod tests {
         .into_iter()
         .rev()
         .fold(0, |acc, (count, time)| {
-            assert_eq!(acc + count, solve(EXAMPLE, 2, time));
+            assert_eq!(Some(acc + count), solve(EXAMPLE, 2, time));
             acc + count
         });
     }
@@ -145,7 +133,7 @@ mod tests {
         .into_iter()
         .rev()
         .fold(0, |acc, (count, time)| {
-            assert_eq!(acc + count, solve(EXAMPLE, 20, time));
+            assert_eq!(Some(acc + count), solve(EXAMPLE, 20, time));
             acc + count
         });
     }

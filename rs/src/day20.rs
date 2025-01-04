@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use rayon::iter::{IndexedParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 pub fn part1(data: &str) -> Option<usize> {
     solve(data, 2, 100)
@@ -47,17 +47,14 @@ fn solve(data: &str, cheats: usize, time: usize) -> Option<usize> {
     path.sort_unstable();
     Some(
         path.par_iter()
-            .map(|((y1, x1), i)| {
-                path[path
-                    .binary_search(&((y1.saturating_sub(cheats), *x1), 0))
-                    .unwrap_or_else(|j| j)
-                    ..path
-                        .binary_search(&((y1.saturating_add(cheats), x1 + 1), 0))
-                        .unwrap_or_else(|j| j)]
+            .enumerate()
+            .map(|(i, ((y1, x1), t1))| {
+                path[i + 1..]
                     .iter()
-                    .filter(|((y2, x2), j)| {
+                    .take_while(|(pos, _)| *pos <= (y1 + cheats, *x1))
+                    .filter(|((y2, x2), t2)| {
                         let d = y1.abs_diff(*y2) + x1.abs_diff(*x2);
-                        d <= cheats && i + d + time <= *j
+                        d <= cheats && d + time <= t1.abs_diff(*t2)
                     })
                     .count()
             })

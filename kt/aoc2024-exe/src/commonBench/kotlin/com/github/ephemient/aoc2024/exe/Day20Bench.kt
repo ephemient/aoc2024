@@ -17,13 +17,17 @@ class Day20Bench {
     }
 
     @Benchmark
-    fun part1() = Day20(input).part1()
+    fun part1() = runBlockingBenchmark {
+        Day20(input).part1()
+    }
 
     @Benchmark
-    fun part2() = Day20(input).part2()
+    fun part2() = runBlockingBenchmark {
+        Day20(input).part2()
+    }
 
     @Benchmark
-    fun solve(bh: Blackhole) {
+    fun solve(bh: Blackhole) = runBlockingBenchmark {
         val day20 = Day20(input)
         bh.consume(day20.part1())
         bh.consume(day20.part2())

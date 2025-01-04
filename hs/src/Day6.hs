@@ -10,7 +10,7 @@ import Data.List.NonEmpty (NonEmpty ((:|)))
 import Data.Maybe (catMaybes, isJust)
 import Data.Semigroup (Max (Max), sconcat)
 import Data.Set (Set)
-import Data.Set qualified as Set (empty, insert, lookupGE, member, notMember, singleton)
+import Data.Set qualified as Set (empty, insert, member, singleton)
 import Data.Text (Text)
 import Data.Text qualified as T (lines, unpack)
 
@@ -52,14 +52,11 @@ part1 input = length $ nubOrd $ map fst $ start >>= visited maxes blocks
 
 part2 :: Text -> Int
 part2 input =
-  length . filter id . parMap rseq isLoop $
-    start >>= (zip `ap` scanl (flip Set.insert) Set.empty) . visited maxes blocks
+  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (nubOrd . map fst . visited maxes blocks)
   where
     (maxes, blocks, start) = parse input
-    isLoop (start'@((y, x), (dy, dx)), seen) =
-      pos' `Set.notMember` blocks
-        && Just pos' /= (fst <$> Set.lookupGE (pos', minBound) seen)
-        && or (zipWith Set.member `ap` scanl (flip Set.insert) seen $ visited maxes blocks' start')
-      where
-        pos' = (y + dy, x + dx)
-        blocks' = Set.insert pos' blocks
+    isLoop start' block = isLoop' 0 Set.empty $ visited maxes (Set.insert block blocks) start'
+    isLoop' _ _ [] = False
+    isLoop' (-1) seen ((_, (dy, _)) : rest) = isLoop' dy seen rest
+    isLoop' _ seen ((pos, (-1, _)) : rest) = pos `Set.member` seen || isLoop' (-1) (Set.insert pos seen) rest
+    isLoop' _ seen ((_, (dy, _)) : rest) = isLoop' dy seen rest

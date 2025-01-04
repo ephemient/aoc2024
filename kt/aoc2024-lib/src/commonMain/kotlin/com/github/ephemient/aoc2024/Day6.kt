@@ -24,7 +24,13 @@ class Day6(input: String) {
     suspend fun part2() = initialWalk.asFlow().drop(1).flatMapMerge { (y, x) ->
         val lines = lines.toMutableList()
         lines[y] = StringBuilder(lines[y]).apply { set(x, '#') }.toString()
-        flowOf(Unit).filter { !lines.walk(initialPosition).all(mutableSetOf<Any?>()::add) }
+        flowOf(Unit).filter {
+            var last = 0
+            val visited = mutableSetOf<IntPair>()
+            !lines.walk(initialPosition).all { (pos, dir) ->
+                (last == -1 || dir.first != -1 || visited.add(pos)).also { last = dir.first }
+            }
+        }
     }.count()
 
     companion object {

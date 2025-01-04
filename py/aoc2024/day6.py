@@ -81,11 +81,13 @@ def _part2(
     max_bounds: tuple[int, int],
     obstructions: Iterable[tuple[int, int]],
 ) -> bool:
-    visited = set()
-    for key in _visit(initial_pos, max_bounds, obstructions):
-        if key in visited:
-            return True
-        visited.add(key)
+    last_dy, visited = None, set()
+    for pos, (dy, _) in _visit(initial_pos, max_bounds, obstructions):
+        if last_dy != -1 and dy == -1:
+            if pos in visited:
+                return True
+            visited.add(pos)
+        last_dy = dy
     return False
 
 

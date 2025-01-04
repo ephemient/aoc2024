@@ -5,8 +5,8 @@
 -- Description:    <https://adventofcode.com/2024/day/12 Day 12: Garden Groups>
 module Day12 (part1, part2) where
 
-import Control.Arrow (first)
 import Control.Monad (ap)
+import Data.Bifunctor (first)
 import Data.Either (partitionEithers)
 import Data.Function (on)
 import Data.List (groupBy)

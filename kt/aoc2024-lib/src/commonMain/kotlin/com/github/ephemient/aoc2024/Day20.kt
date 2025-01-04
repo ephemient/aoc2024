@@ -1,6 +1,7 @@
 package com.github.ephemient.aoc2024
 
 import kotlin.math.abs
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
@@ -26,6 +27,7 @@ class Day20(input: String) {
 
     suspend fun part2(time: Int = 100) = solve(20, time)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun solve(cheats: Int, time: Int) = path.indices.asFlow().flatMapMerge { i ->
         flow {
             var count = 0

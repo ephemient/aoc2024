@@ -108,9 +108,13 @@ pub fn part2(data: &str) -> Option<usize> {
             .filter(|candidate| {
                 let mut data = data.clone();
                 assert!(data.obstacles.insert(*candidate));
+                let mut last_dy = 0;
                 let mut visited = BTreeSet::new();
-                let ok = data.iter().any(|state| !visited.insert(state));
-                ok
+                !data.iter().all(|(pos, (dy, _))| {
+                    let ok = last_dy == -1 || dy != -1 || visited.insert(pos);
+                    last_dy = dy;
+                    ok
+                })
             })
             .count(),
     )

@@ -7,33 +7,66 @@ class Day18(input: String, private val size: Int = 70) {
         x to y
     }.toList()
 
-    private fun findPath(obstacles: Iterable<IntPair>): Set<IntPair>? {
-        val visited = obstacles.toMutableSet()
-        val queue = ArrayDeque<Node>()
-        queue.add(Node(0, 0))
+    fun part1(limit: Int = 1024): Int? {
+        val visited = coords.subList(0, limit).toMutableSet().apply { add(0 to 0) }
+        val queue = ArrayDeque<IndexedValue<IntPair>>()
+        queue.add(IndexedValue(0, 0 to 0))
         while (queue.isNotEmpty()) {
-            val node = queue.removeFirst()
-            val (x, y) = node
-            if (x == size && y == size) return generateSequence(node) { it.next }.map { it.x to it.y }.toSet()
-            if (!visited.add(x to y)) continue
-            if (x > 0) queue.addLast(Node(x - 1, y, node))
-            if (y > 0) queue.addLast(Node(x, y - 1, node))
-            if (y < size) queue.addLast(Node(x, y + 1, node))
-            if (x < size) queue.addLast(Node(x + 1, y, node))
+            val (t, pos) = queue.removeFirst()
+            val (x, y) = pos
+            if (x == size && y == size) return t
+            if (x > 0) (x - 1 to y).let { if (visited.add(it)) queue.addLast(IndexedValue(t + 1, it)) }
+            if (y > 0) (x to y - 1).let { if (visited.add(it)) queue.addLast(IndexedValue(t + 1, it)) }
+            if (y < size) (x to y + 1).let { if (visited.add(it)) queue.addLast(IndexedValue(t + 1, it)) }
+            if (x < size) (x + 1 to y).let { if (visited.add(it)) queue.addLast(IndexedValue(t + 1, it)) }
         }
         return null
     }
-
-    fun part1(limit: Int = 1024): Int? = findPath(coords.subList(0, limit))?.size?.minus(1)
 
     fun part2(): String? {
-        var i = 0
-        while (i < coords.size) {
-            val path = findPath(coords.subList(0, i + 1)) ?: return coords[i].let { (x, y) -> "$x,$y" }
-            do i++ while (i < coords.size && coords[i] !in path)
+        val coords = coords.toMutableSet()
+        val sets = UnionFind<IntPair>()
+        for (x in 0..size) {
+            for (y in 0..size) {
+                val pos = x to y
+                if (pos in coords) continue
+                sets[pos]
+                if (x < size) (x + 1 to y).takeIf { it !in coords }?.let { sets[pos] = it }
+                if (y < size) (x to y + 1).takeIf { it !in coords }?.let { sets[pos] = it }
+            }
         }
-        return null
+        val src = 0 to 0
+        val dst = size to size
+        val (x, y) = coords.toList().asReversed().firstOrNull { pos ->
+            coords.remove(pos)
+            sets[pos]
+            val (x, y) = pos
+            if (x > 0) (x - 1 to y).takeIf { it !in coords }?.let { sets[pos] = it }
+            if (y > 0) (x to y - 1).takeIf { it !in coords }?.let { sets[pos] = it }
+            if (y < size) (x to y + 1).takeIf { it !in coords }?.let { sets[pos] = it }
+            if (x < size) (x + 1 to y).takeIf { it !in coords }?.let { sets[pos] = it }
+            sets[src] == sets[dst]
+        } ?: return null
+        return "$x,$y"
     }
 
-    private data class Node(val x: Int, val y: Int, val next: Node? = null)
+    private class UnionFind<T> {
+        private val sets = mutableMapOf<T, T>()
+
+        operator fun get(key: T): T {
+            var key = key
+            var value = sets.getOrPut(key) { key }
+            while (key != value) {
+                val next = sets.getOrPut(value) { value }
+                sets[key] = next
+                key = value
+                value = next
+            }
+            return value
+        }
+
+        operator fun set(key: T, value: T) {
+            sets[get(key)] = get(value)
+        }
+    }
 }

@@ -1,6 +1,5 @@
 [versions]
 asm = "9.7.1"
-atomicfu = "0.26.1"
 detekt = "1.23.7"
 junit-jupiter = "5.11.4"
 kotlin = "2.1.0"
@@ -12,7 +11,6 @@ native-image = "0.10.4"
 okio = "3.9.1"
 
 [plugins]
-atomicfu = { id = "org.jetbrains.kotlinx.atomicfu", version.ref = "atomicfu" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

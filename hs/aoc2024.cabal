@@ -20,6 +20,7 @@ source-repository head
 
 library
   hs-source-dirs: src
+  c-sources: src/cbits/atomics.c
   exposed-modules:
     Day1
     Day10
@@ -59,7 +60,6 @@ library
     megaparsec ^>=9.7.0,
     parallel ^>=3.2.2.0,
     split ^>=0.2.5,
-    stm ^>=2.5.3.1,
     text ^>=2.1.2,
     vector ^>=0.13.2.0,
 

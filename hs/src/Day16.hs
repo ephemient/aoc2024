@@ -5,8 +5,8 @@
 -- Description:    <https://adventofcode.com/2024/day/16 Day 16: Reindeer Maze>
 module Day16 (part1, part2) where
 
-import Control.Arrow (second)
 import Control.Exception (assert)
+import Data.Bifunctor (second)
 import Data.Heap (FstMinPolicy)
 import Data.Heap qualified as Heap (insert, singleton, view)
 import Data.Map qualified as Map (empty, insert, (!?))

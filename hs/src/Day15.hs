@@ -5,9 +5,9 @@
 -- Description:    <https://adventofcode.com/2024/day/15 Day 15: Warehouse Woes>
 module Day15 (part1, part2) where
 
-import Control.Arrow (Arrow (first, second))
 import Control.Exception (assert)
 import Data.Array.Unboxed (IArray, UArray, assocs, listArray, (!), (//))
+import Data.Bifunctor (first, second)
 import Data.List (sort)
 import Data.Text (Text)
 import Data.Text qualified as T (breakOn, concat, concatMap, foldl', justifyLeft, length, lines, singleton, unpack)

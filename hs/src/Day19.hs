@@ -5,7 +5,7 @@
 -- Description:    <https://adventofcode.com/2024/day/19 Day 19: Linen Layout>
 module Day19 (solve) where
 
-import Control.Arrow ((***))
+import Data.Bifunctor (bimap)
 import Data.Foldable (foldMap')
 import Data.Monoid (Sum (Sum, getSum))
 import Data.Text (Text)
@@ -22,5 +22,5 @@ count keys target = getCount $ T.length target
 solve :: Text -> (Int, Int)
 solve input
   | keys : rest <- T.lines input =
-      (getSum *** getSum) . foldMap' ((Sum 1,) . Sum) . filter (> 0) $ count (T.splitOn ", " keys) <$> filter (not . T.null) rest
+      bimap getSum getSum . foldMap' ((Sum 1,) . Sum) . filter (> 0) $ count (T.splitOn ", " keys) <$> filter (not . T.null) rest
   | otherwise = (0, 0)

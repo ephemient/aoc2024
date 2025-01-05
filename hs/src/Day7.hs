@@ -41,8 +41,6 @@ op2 x y =
          z /= 0 && r == y
        ]
 
-part1 :: Text -> Either String Int
+part1, part2 :: Text -> Either String Int
 part1 = solve op1
-
-part2 :: Text -> Either String Int
 part2 = solve op2

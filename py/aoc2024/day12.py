@@ -2,8 +2,8 @@
 Day 12: Garden Groups
 """
 
-from collections import Counter, defaultdict
 import textwrap
+from collections import Counter, defaultdict
 from typing import Generator
 
 SAMPLE_INPUT_1 = textwrap.dedent(

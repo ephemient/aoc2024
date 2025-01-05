@@ -50,7 +50,7 @@ def part2(data: str) -> int:
         num = int(line)
         memset(seen, False, len(seen))
         window = deque((num % 10,), 5)
-        for _ in range(2000):
+        for _ in range(2001):
             if len(window) == window.maxlen:
                 window.popleft()
             num = _step(num)

@@ -3,7 +3,8 @@ Day 18: RAM Run
 """
 
 from collections import deque
-from typing import Iterable
+from itertools import islice
+from typing import Generator
 
 SAMPLE_INPUT = """
 5,4
@@ -34,53 +35,69 @@ SAMPLE_INPUT = """
 """
 
 
-def _parse(data: str) -> list[tuple[int, int]]:
-    return [
-        (int(line[: (i := line.index(","))]), int(line[i + 1 :]))
-        for line in data.splitlines()
-        if "," in line
-    ]
-
-
-def findpath(obstacles: Iterable[tuple[int, int]], size: int) -> list[tuple[int, int]]:
-    visited, queue = set(obstacles), deque(([(0, 0)],))
-    while queue:
-        path = queue.popleft()
-        x, y = pos = path[-1]
-        if x == size and y == size:
-            return path
-        if pos in visited:
+def _parse(data: str) -> Generator[tuple[int, int]]:
+    for line in data.splitlines():
+        if "," not in line:
             continue
-        visited.add(pos)
-        for pos in ((x - 1, y), (x, y - 1), (x, y + 1), (x + 1, y)):
-            x, y = pos
-            if 0 <= x <= size and 0 <= y <= size:
-                queue.append(path + [(x, y)])
-    return None
+        x, y = line.split(",", maxsplit=1)
+        yield int(x), int(y)
 
 
-def part1(data: str, size: int = 70, n: int = 1024) -> int:
+def part1(data: str, size: int = 70, n: int = 1024) -> int | None:
     """
     >>> part1(SAMPLE_INPUT, 6, 12)
     22
     """
-    return len(findpath(_parse(data)[:n], size)) - 1
+    visited, queue = set(islice(_parse(data), n)), deque((((0, 0), 0),))
+    visited.add((0, 0))
+    while queue:
+        (x, y), _ = pos, t = queue.popleft()
+        if x == size and y == size:
+            return t
+        for pos in ((x - 1, y), (x, y - 1), (x, y + 1), (x + 1, y)):
+            x, y = pos
+            if 0 <= x <= size and 0 <= y <= size and pos not in visited:
+                visited.add(pos)
+                queue.append((pos, t + 1))
+    return None
 
 
-def part2(data: str, size: int = 70) -> str:
+def _root[T](sets: dict[T, T], key: T) -> T:
+    value = sets.setdefault(key, key)
+    while key != value:
+        sets[key], _ = key, value = value, sets.setdefault(value, value)
+    return value
+
+
+def part2(data: str, size: int = 70) -> str | None:
     """
     >>> part2(SAMPLE_INPUT, 6)
     '6,1'
     """
-    obstacles, i = _parse(data), 0
-    while True:
-        path = findpath(obstacles[: i + 1], size)
-        if path is None:
-            x, y = obstacles[i]
+    obstacles, sets = {}, {}
+    for pos in _parse(data):
+        if pos not in obstacles:
+            obstacles[pos] = None
+    for x in range(size + 1):
+        for y in range(size + 1):
+            pos = x, y
+            if pos in obstacles:
+                continue
+            _root(sets, pos)
+            for pos2 in ((x, y + 1), (x + 1, y)):
+                x2, y2 = pos2
+                if 0 <= x2 <= size and 0 <= y2 <= size and pos2 not in obstacles:
+                    sets[_root(sets, pos)] = _root(sets, pos2)
+    for pos in list(reversed(obstacles.keys())):
+        del obstacles[pos]
+        x, y = pos
+        for pos2 in ((x - 1, y), (x, y - 1), (x, y + 1), (x + 1, y)):
+            x2, y2 = pos2
+            if 0 <= x2 <= size and 0 <= y2 <= size and pos2 not in obstacles:
+                sets[_root(sets, pos)] = _root(sets, pos2)
+        if _root(sets, (0, 0)) == _root(sets, (size, size)):
             return f"{x},{y}"
-        path = set(path)
-        while obstacles[i] not in path:
-            i += 1
+    return None
 
 
 parts = (part1, part2)

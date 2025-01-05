@@ -28,63 +28,60 @@ class Day16(input: String) {
         this.end = requireNotNull(end)
     }
 
-    fun part1(): Int {
-        val visited = mutableSetOf<IntPair>()
-        val queue = PriorityQueue(compareBy(IndexedValue<State>::index))
-        queue.add(IndexedValue(0, State(start)))
+    private val cachedExplore = mutableListOf<Result>()
+    private val visited = mutableMapOf<State, Int>()
+    private val queue = PriorityQueue(compareBy(Result::points)).apply {
+        add(Result(State(start.first, start.second, 0, 1), 0, 0))
+    }
+    private fun explore() = cachedExplore.asSequence() + sequence {
         while (!queue.isEmpty()) {
-            val (score, state) = queue.remove()
-            val pos = state.pos()
-            if (!visited.add(pos)) continue
-            if (state.pos() == end) return score
-            for (value in arrayOf(
-                IndexedValue(score + 1, state.forward()),
-                IndexedValue(score + 1001, state.left()),
-                IndexedValue(score + 1001, state.right()),
-            )) {
-                if (value.value.pos() !in maze) queue.add(value)
+            val state = queue.remove()
+            val previous = visited[state.state]
+            check(previous == null || previous <= state.points)
+            if (previous != null && previous < state.points) continue
+            yield(state)
+            if (previous == null) {
+                visited[state.state] = state.points
+                state.state.forward().let { if (it.pos() !in maze) queue.add(Result(it, state.points + 1, 1)) }
+                state.state.left().let { if (it.pos() !in maze) queue.add(Result(it, state.points + 1001, 2)) }
+                state.state.right().let { if (it.pos() !in maze) queue.add(Result(it, state.points + 1001, 4)) }
             }
         }
-        error("no path")
-    }
+    }.onEach(cachedExplore::add)
+
+    fun part1(): Int = explore().first { it.state.pos() == end }.points
 
     fun part2(): Int {
-        val best = part1()
-        val acc = mutableSetOf<IntPair>()
-        val visited = mutableMapOf<State, Int>()
-        val queue = PriorityQueue(compareBy(IndexedValue<Pair<State, Set<IntPair>>>::index))
-        queue.add(IndexedValue(0, State(start) to setOf(start)))
-        while (!queue.isEmpty()) {
-            val (score, value) = queue.remove()
-            val (state, path) = value
-            val lastScore = visited[state]
-            check(lastScore == null || lastScore <= score)
-            if (lastScore != null && lastScore < score) continue
-            if (lastScore == null) visited[state] = score
-            if (state.pos() == end) {
-                check(score == best)
-                acc.addAll(path)
-                continue
-            }
-            for ((nextScore, nextState) in arrayOf(
-                IndexedValue(score + 1, state.forward()),
-                IndexedValue(score + 1001, state.left()),
-                IndexedValue(score + 1001, state.right())
-            )) {
-                if (nextScore > best) continue
-                val pos = nextState.pos()
-                if (pos in maze || pos in path) continue
-                queue.add(IndexedValue(nextScore, nextState to path + pos))
-            }
+        var best = -1
+        val paths = explore()
+            .takeWhile { best !in 0..<it.points }
+            .onEach { if (it.state.pos() == end) best = it.points }
+            .groupingBy { it.state }
+            .fold(0) { ways, (_, _, way) -> ways or way }
+        val stack = mutableListOf(
+            State(end.first, end.second, 0, 1),
+            State(end.first, end.second, 1, 0),
+            State(end.first, end.second, 0, -1),
+            State(end.first, end.second, -1, 0),
+        )
+        val seen = stack.toMutableSet()
+        while (stack.isNotEmpty()) {
+            val key = stack.removeLast()
+            val ways = paths.getOrElse(key) { 0 }
+            val (y, x, dy, dx) = key
+            if (ways and 1 != 0) State(y - dy, x - dx, dy, dx).let { if (seen.add(it)) stack.add(it) }
+            if (ways and 2 != 0) State(y - dy, x - dx, dx, -dy).let { if (seen.add(it)) stack.add(it) }
+            if (ways and 4 != 0) State(y - dy, x - dx, -dx, dy).let { if (seen.add(it)) stack.add(it) }
         }
-        return acc.size
+        return seen.mapTo(mutableSetOf(), State::pos).size
     }
 
     private data class State(val y: Int, val x: Int, val dy: Int, val dx: Int) {
-        constructor(pos: IntPair) : this(pos.first, pos.second, 0, 1)
         fun pos() = y to x
         fun forward() = State(y + dy, x + dx, dy, dx)
         fun left() = State(y - dx, x + dy, -dx, dy)
         fun right() = State(y + dx, x - dy, dx, -dy)
     }
+
+    private data class Result(val state: State, val points: Int, val way: Int)
 }

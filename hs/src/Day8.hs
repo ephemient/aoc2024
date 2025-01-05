@@ -31,8 +31,6 @@ solve extend input =
           c /= '.'
         ]
 
-part1 :: Text -> Int
+part1, part2 :: Text -> Int
 part1 = solve $ \(y0, x0) (y1, x1) -> [(2 * y1 - y0, 2 * x1 - x0)]
-
-part2 :: Text -> Int
 part2 = solve $ \(y0, x0) (y1, x1) -> zip [y1, 2 * y1 - y0 ..] [x1, 2 * x1 - x0 ..]

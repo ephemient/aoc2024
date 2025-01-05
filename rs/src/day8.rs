@@ -35,9 +35,11 @@ where
                     .flat_map(|(y1, x1)| {
                         let (dy, dx) = (*y1 as isize - *y0 as isize, *x1 as isize - *x0 as isize);
                         multiples.clone().map_while(move |i| {
-                            y1.checked_add_signed(i * dy)
-                                .zip(x1.checked_add_signed(i * dx))
-                                .filter(|(y, x)| *y < height && *x < width)
+                            Some((
+                                y1.wrapping_add_signed(i * dy),
+                                x1.wrapping_add_signed(i * dx),
+                            ))
+                            .filter(|(y, x)| *y < height && *x < width)
                         })
                     })
             })

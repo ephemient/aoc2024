@@ -1,4 +1,3 @@
-use if_chain::if_chain;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use std::collections::BTreeSet;
 use std::str::FromStr;
@@ -54,21 +53,16 @@ impl Iterator for Visitor<'_> {
         match &mut self.state {
             Some((pos, dir)) => {
                 let state = (*pos, *dir);
-                if_chain! {
-                    if let Some(y) = pos.0.checked_add_signed(dir.0);
-                    if y < self.max_bounds.0;
-                    if let Some(x) = pos.1.checked_add_signed(dir.1);
-                    if x < self.max_bounds.1;
-                    then {
-                        if self.obstacles.contains(&(y, x)) {
-                            *dir = (dir.1, -dir.0);
-                        } else {
-                            *pos = (y, x);
-                        }
+                let y = pos.0.wrapping_add_signed(dir.0);
+                let x = pos.1.wrapping_add_signed(dir.1);
+                if y < self.max_bounds.0 && x < self.max_bounds.1 {
+                    if self.obstacles.contains(&(y, x)) {
+                        *dir = (dir.1, -dir.0);
+                    } else {
+                        *pos = (y, x);
                     }
-                    else {
-                        self.state = None;
-                    }
+                } else {
+                    self.state = None;
                 }
                 Some(state)
             }

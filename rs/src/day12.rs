@@ -28,14 +28,13 @@ impl Data<'_> {
                 while let Some(pos @ (y, x)) = stack.pop() {
                     group.insert(pos);
                     for (dy, dx) in [(-1, 0), (0, -1), (0, 1), (1, 0)] {
+                        let pos @ (y, x) = (y.wrapping_add_signed(dy), x.wrapping_add_signed(dx));
                         if_chain! {
-                            if let Some(y) = y.checked_add_signed(dy);
                             if let Some(line) = self.lines.get(y);
-                            if let Some(x) = x.checked_add_signed(dx);
-                            if line.as_bytes().get(x).copied() == Some(b);
-                            if visited.insert((y, x));
+                            if line.as_bytes().get(x) == Some(&b);
+                            if visited.insert(pos);
                             then {
-                                stack.push((y, x));
+                                stack.push(pos);
                             }
                         }
                     }

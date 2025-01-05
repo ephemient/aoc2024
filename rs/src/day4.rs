@@ -15,9 +15,10 @@ pub fn part1(data: &str) -> usize {
                     .filter_map(move |(dx, dy)| {
                         try_from_fn(|i| {
                             lines
-                                .get(y + i * dy)
-                                .zip(x.checked_add_signed(i as isize * dx))
-                                .and_then(|(line, x)| line.as_bytes().get(x).copied())
+                                .get(y + i * dy)?
+                                .as_bytes()
+                                .get(x.wrapping_add_signed(i as isize * dx))
+                                .copied()
                         })
                     })
             })

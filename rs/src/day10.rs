@@ -25,13 +25,10 @@ where
     let mut ret = BTreeMap::new();
     for ((y, x), value) in acc {
         for (dy, dx) in [(-1, 0), (0, -1), (0, 1), (1, 0)] {
-            if let Some(point) = y
-                .checked_add_signed(dy)
-                .zip(x.checked_add_signed(dx))
-                .filter(|point| points.contains(point))
-            {
+            let point = (y.wrapping_add_signed(dy), x.wrapping_add_signed(dx));
+            if points.contains(&point) {
                 ret.entry(point)
-                    .and_modify(|e: &mut T| *e = plus(value, e))
+                    .and_modify(|e| *e = plus(value, e))
                     .or_insert_with(|| value.clone());
             }
         }

@@ -7,17 +7,33 @@ license = "BSD-3-Clause"
 readme = "README.md"
 repository = "https://github.com/ephemient/aoc2024/tree/main/py"
 
+[[tool.poetry.include]]
+path = "test_benchmark.py"
+format = "sdist"
+
+[[tool.poetry.include]]
+path = "aoc2024/**/*.pyd"
+format = "wheel"
+
+[[tool.poetry.include]]
+path = "aoc2024/**/*.so"
+format = "wheel"
+
 [tool.poetry.dependencies]
 python = "^3.13"
 natsort = "^8.4.0"
+cython = "^3.0.11"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.8.5"
 pytest = "^8.3.4"
 pytest-benchmark = { version = "^5.1.0", extras = ["histogram"] }
 
+[tool.poetry.build]
+script = "poetry_build.py"
+
 [tool.pytest.ini_options]
-addopts = '--doctest-modules --benchmark-disable --benchmark-sort=fullname'
+addopts = '--doctest-modules --benchmark-disable --benchmark-sort=fullname --import-mode=importlib'
 required_plugins = ['pytest-benchmark']
 
 [tool.poetry.scripts]
@@ -51,5 +67,5 @@ day24 = "aoc2024.day24:parts"
 day25 = "aoc2024.day25:parts"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0", "cython", "setuptools"]
 build-backend = "poetry.core.masonry.api"

@@ -1,3 +1,7 @@
 __pycache__/
+build/
 dist/
+*.c
+*.pyd
+*.so
 *~

@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: aoc2024-py
-          path: py/dist/*.whl
+          path: py/dist/*
 
   run:
     needs: [ get-inputs, build ]

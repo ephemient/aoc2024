@@ -4,9 +4,8 @@ Day 14: Restroom Redoubt
 
 from collections import namedtuple
 from functools import partial
-from itertools import zip_longest
 from math import lcm
-from typing import Generator
+from typing import Generator, Iterable
 
 SAMPLE_INPUT = """
 p=0,4 v=3,-3
@@ -26,23 +25,21 @@ p=9,5 v=-3,-3
 WIDTH, HEIGHT = 101, 103
 
 
-class _Robot(namedtuple("Robot", ("x0", "y0", "vx", "vy"))):
-    def __getitem__(
-        self, t: int, width: int = WIDTH, height: int = HEIGHT
-    ) -> tuple[int, int]:
-        return (self.x0 + t * self.vx) % width, (self.y0 + t * self.vy) % height
+class _Robot(namedtuple("Robot1", ("p0", "v", "m"))):
+    def __getitem__(self, t: int) -> int:
+        return (self.p0 + t * self.v) % self.m
 
 
-def _parse(data: str) -> Generator[_Robot]:
+def _parse(
+    data: str, width: int = WIDTH, height: int = HEIGHT
+) -> Generator[tuple[_Robot, _Robot]]:
     for line in filter(None, data.splitlines()):
         p, v = line.split(maxsplit=1)
         p = p[p.index("=") + 1 :]
         v = v[v.index("=") + 1 :]
-        yield _Robot(
-            int(p[: p.index(",")]),
-            int(p[p.index(",") + 1 :]),
-            int(v[: v.index(",")]),
-            int(v[v.index(",") + 1 :]),
+        yield (
+            _Robot(int(p[: p.index(",")]), int(v[: v.index(",")]), width),
+            _Robot(int(p[p.index(",") + 1 :]), int(v[v.index(",") + 1 :]), height),
         )
 
 
@@ -53,8 +50,8 @@ def part1(data: str, width: int = WIDTH, height: int = HEIGHT) -> int:
     """
     midpoint_x, midpoint_y = width // 2, height // 2
     q1, q2, q3, q4 = 0, 0, 0, 0
-    for robot in _parse(data):
-        x, y = robot.__getitem__(100, width=width, height=height)
+    for xrobot, yrobot in _parse(data, width, height):
+        x, y = xrobot[100], yrobot[100]
         if x > midpoint_x and y > midpoint_y:
             q1 += 1
         if x < midpoint_x and y > midpoint_y:
@@ -66,19 +63,26 @@ def part1(data: str, width: int = WIDTH, height: int = HEIGHT) -> int:
     return q1 * q2 * q3 * q4
 
 
-def _part2_key(robots: tuple[_Robot], t: int) -> int:
-    positions = sorted((robot[t] for robot in robots))
-    line, max_line = 1, 0
-    for (x, y), next in zip_longest(positions, positions[1:]):
-        if (x, y + 1) == next:
-            line += 1
-        else:
-            line, max_line = 1, max(line, max_line)
-    return -max_line, t
+def _part2_key(robots: Iterable[_Robot], t: int) -> int:
+    h1, h2 = 0, 0
+    for robot in robots:
+        p = robot[t]
+        if p < robot.m // 2:
+            h1 += 1
+        elif p > robot.m // 2:
+            h2 += 1
+    return max(h1, h2)
 
 
 def part2(data: str) -> int:
-    return min(range(lcm(WIDTH * HEIGHT)), key=partial(_part2_key, tuple(_parse(data))))
+    xrobots = []
+    yrobots = []
+    for xrobot, yrobot in _parse(data):
+        xrobots.append(xrobot)
+        yrobots.append(yrobot)
+    x = max(range(WIDTH), key=partial(_part2_key, xrobots))
+    y = max(range(HEIGHT), key=partial(_part2_key, yrobots))
+    return (x + (y - x) * pow(WIDTH, -1, HEIGHT) * WIDTH) % lcm(WIDTH, HEIGHT)
 
 
 parts = (part1, part2)

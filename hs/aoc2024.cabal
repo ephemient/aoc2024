@@ -21,6 +21,7 @@ source-repository head
 library
   hs-source-dirs: src
   exposed-modules:
+    Common
     Day1
     Day10
     Day11
@@ -46,9 +47,6 @@ library
     Day7
     Day8
     Day9
-
-  other-modules:
-    Common
 
   build-depends:
     array ^>=0.5.7.0,
@@ -90,6 +88,7 @@ test-suite aoc2024-test
   hs-source-dirs: test
   main-is: Main.hs
   other-modules:
+    CommonSpec
     Day10Spec
     Day11Spec
     Day12Spec
@@ -117,6 +116,7 @@ test-suite aoc2024-test
     Day9Spec
 
   build-depends:
+    QuickCheck ^>=2.15.0.1,
     aoc2024,
     base >=4.20 && <4.22,
     hspec ^>=2.11.10,

@@ -1,7 +1,5 @@
 use std::cmp::Ordering;
 
-use itertools::Itertools;
-
 const WIDTH: isize = 101;
 const HEIGHT: isize = 103;
 
@@ -28,15 +26,15 @@ fn parse(data: &str) -> impl Iterator<Item = Robot> + use<'_> {
 }
 
 pub fn part1(data: &str) -> usize {
-    part1_(data, WIDTH, HEIGHT)
+    part1_::<WIDTH, HEIGHT>(data)
 }
 
-fn part1_(data: &str, width: isize, height: isize) -> usize {
+fn part1_<const WIDTH: isize, const HEIGHT: isize>(data: &str) -> usize {
     let (mut q1, mut q2, mut q3, mut q4) = (0, 0, 0, 0);
     for Robot { x0, y0, vx, vy } in parse(data) {
-        let x = (x0 + vx * 100).rem_euclid(width);
-        let y = (y0 + vy * 100).rem_euclid(height);
-        match ((width / 2).cmp(&x), (height / 2).cmp(&y)) {
+        let x = (x0 + vx * 100).rem_euclid(WIDTH);
+        let y = (y0 + vy * 100).rem_euclid(HEIGHT);
+        match ((WIDTH / 2).cmp(&x), (HEIGHT / 2).cmp(&y)) {
             (Ordering::Less, Ordering::Less) => q1 += 1,
             (Ordering::Less, Ordering::Greater) => q2 += 1,
             (Ordering::Greater, Ordering::Less) => q3 += 1,
@@ -48,23 +46,33 @@ fn part1_(data: &str, width: isize, height: isize) -> usize {
 }
 
 pub fn part2(data: &str) -> Option<usize> {
+    const INVERSE: isize = 51;
+    const _: () = assert!(WIDTH * INVERSE % HEIGHT == 1);
+
     let robots = parse(data).collect::<Vec<_>>();
-    (0..WIDTH * HEIGHT)
-        .max_by_key(|t| {
-            robots
-                .iter()
-                .map(|Robot { x0, y0, vx, vy }| {
-                    (
-                        (x0 + vx * t).rem_euclid(WIDTH),
-                        (y0 + vy * t).rem_euclid(HEIGHT),
-                    )
-                })
-                .sorted()
-                .tuple_windows()
-                .filter(|((x, y), next)| (*x, y + 1) == *next)
-                .count()
-        })
-        .and_then(|t| t.try_into().ok())
+    let x = (0..WIDTH).max_by_key(|t| {
+        let (mut less, mut greater) = (0usize, 0usize);
+        for Robot { x0, vx, .. } in &robots {
+            match (x0 + vx * t).cmp(&(WIDTH / 2)) {
+                Ordering::Less => less += 1,
+                Ordering::Greater => greater += 1,
+                _ => {}
+            }
+        }
+        less.max(greater)
+    })?;
+    let y = (0..HEIGHT).max_by_key(|t| {
+        let (mut less, mut greater) = (0usize, 0usize);
+        for Robot { y0, vy, .. } in &robots {
+            match (y0 + vy * t).cmp(&(HEIGHT / 2)) {
+                Ordering::Less => less += 1,
+                Ordering::Greater => greater += 1,
+                _ => {}
+            }
+        }
+        less.max(greater)
+    })?;
+    Some(((x + (y - x) * INVERSE * WIDTH) % (WIDTH * HEIGHT)) as usize)
 }
 
 #[cfg(test)]
@@ -90,6 +98,6 @@ mod tests {
 
     #[test]
     fn part1_examples() {
-        assert_eq!(12, part1_(EXAMPLE, 11, 7));
+        assert_eq!(12, part1_::<11, 7>(EXAMPLE));
     }
 }

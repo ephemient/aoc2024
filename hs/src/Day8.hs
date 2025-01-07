@@ -4,16 +4,15 @@
 module Day8 (part1, part2) where
 
 import Control.Monad (guard)
-import Data.Containers.ListUtils (nubOrd)
 import Data.Ix (Ix (inRange))
 import Data.Map qualified as Map (elems, fromListWith)
-import Data.Set qualified as Set (singleton, toList)
+import Data.Set qualified as Set (fromList, singleton, size, toList)
 import Data.Text (Text)
 import Data.Text qualified as T (length, lines, unpack)
 
 solve :: ((Int, Int) -> (Int, Int) -> [(Int, Int)]) -> Text -> Int
 solve extend input =
-  length . nubOrd $ do
+  Set.size . Set.fromList $ do
     values <- Set.toList <$> Map.elems points
     p0 <- values
     p1 <- values

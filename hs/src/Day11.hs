@@ -33,7 +33,7 @@ solve n input = do
         let ix = num `mod` sizeofMutableArray array
         readArray array ix >>= writeArray array ix . IntMap.insertWith (+) num 1
       end = iterate step start !! n
-  pure $ foldl' (flip $ (+) . foldl' (+) 0) 0 end
+  pure $ foldl' (foldl' (+)) 0 end
 
 step :: Array (IntMap Int) -> Array (IntMap Int)
 step array = createArray (sizeofArray array) IntMap.empty $ \array' -> do

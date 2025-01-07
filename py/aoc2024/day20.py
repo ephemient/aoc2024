@@ -2,9 +2,7 @@
 Day 20: Race Condition
 """
 
-from functools import partial
-from itertools import takewhile
-from operator import gt
+from aoc2024.day20c import solve as _solve
 
 SAMPLE_INPUT = """
 ###############
@@ -40,17 +38,6 @@ def _getpath(data: str) -> list[tuple[tuple[int, int], int]]:
         for y, x in ((y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)):
             if data[y][x] != "#" and (y, x) not in path:
                 stack.append(((y, x), path | {(y, x): len(path)}))
-
-
-def _solve(path: list[tuple[tuple[int, int], int]], cheats: int, time: int) -> int:
-    return sum(
-        (distance := abs(y2 - y1) + abs(x2 - x1)) <= cheats
-        and distance + time <= abs(t2 - t1)
-        for i, ((y1, x1), t1) in enumerate(path)
-        for (y2, x2), t2 in takewhile(
-            partial(gt, ((y1 + cheats, x1 + 1),)), path[i + 1 :]
-        )
-    )
 
 
 def part1(data: str, time: int = 100) -> int:

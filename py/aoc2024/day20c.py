@@ -5,7 +5,7 @@ import cython
 @cython.ccall
 @cython.nogil
 def solve(path: cython.int[:], cheats: cython.int, time: cython.int) -> cython.int:
-    count: cython.int = path.shape[0] // 3
+    count: cython.int = len(path) // 3
     i: cython.int
     result: cython.int = 0
     for i in range(count):

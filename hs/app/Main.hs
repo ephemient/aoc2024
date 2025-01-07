@@ -76,7 +76,7 @@ main = do
   run 16 (maybe (fail "error") print) [Day16.part1, Day16.part2]
   run 17 (either (fail . errorBundlePretty) $ putStrLn . intercalate "," . map show) [Day17.part1, fmap (: []) . Day17.part2]
   run 18 (either fail putStrLn) [fmap show . Day18.part1, fmap (uncurry $ (. (',' :) . show) . shows) . Day18.part2]
-  run 19 (uncurry (>>) . bimap print print) [Day19.solve]
+  run 19 (maybe (fail "error") $ uncurry (>>) . bimap print print) [Day19.solve]
   run 20 print [Day20.solve 2 100, Day20.solve 20 100]
   run 21 print [Day21.solve 2, Day21.solve 25]
   run 22 (either fail print) [Day22.part1, Day22.part2]

@@ -26,4 +26,4 @@ spec :: Spec
 spec = do
   describe "solve" $ do
     it "examples" $ do
-      solve example `shouldBe` (6, 16)
+      solve example `shouldBe` Just (6, 16)

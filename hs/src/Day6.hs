@@ -1,3 +1,6 @@
+{-# LANGUAGE PartialTypeSignatures #-}
+{-# OPTIONS_GHC -Wno-partial-type-signatures #-}
+
 -- |
 -- Module:         Day6
 -- Description:    <https://adventofcode.com/2024/day/6 Day 6: Guard Gallivant>
@@ -5,12 +8,11 @@ module Day6 (part1, part2) where
 
 import Control.Monad (ap)
 import Control.Parallel.Strategies (parMap, rseq)
-import Data.Containers.ListUtils (nubOrd)
 import Data.Ix (Ix, inRange)
 import Data.Maybe (catMaybes, isJust)
 import Data.Semigroup (Max (Max))
 import Data.Set (Set)
-import Data.Set qualified as Set (empty, insert, member, singleton)
+import Data.Set qualified as Set (empty, fromList, insert, member, singleton, size, toList)
 import Data.Text (Text)
 import Data.Text qualified as T (lines, unpack)
 
@@ -45,13 +47,13 @@ visited bounds isBlock start = catMaybes $ takeWhile isJust $ iterate (>>= step)
         pos' = (y + dy, x + dx)
 
 part1 :: Text -> Int
-part1 input = length $ nubOrd $ map fst $ start >>= visited bounds (`Set.member` blocks)
+part1 input = Set.size $ Set.fromList $ map fst $ start >>= visited bounds (`Set.member` blocks)
   where
     (bounds, blocks, start) = parse input
 
 part2 :: Text -> Int
 part2 input =
-  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (nubOrd . map fst . visited bounds (`Set.member` blocks))
+  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (Set.toList . Set.fromList . map fst . visited bounds (`Set.member` blocks))
   where
     (bounds, blocks, start) = parse input
     isBlock block pos = pos == block || pos `Set.member` blocks

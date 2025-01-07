@@ -2,6 +2,9 @@
 Day 20: Race Condition
 """
 
+from array import array
+from itertools import chain
+
 from aoc2024.day20c import solve as _solve
 
 SAMPLE_INPUT = """
@@ -23,25 +26,24 @@ SAMPLE_INPUT = """
 """
 
 
-def _getpath(data: str) -> list[tuple[tuple[int, int], int]]:
+def _getpath(data: str) -> array[int]:
     data = data.splitlines()
-    pos = next(
+    y, x = next(
         (y, x)
         for y, line in enumerate(data)
         for x, char in enumerate(line)
         if char == "S"
     )
-    path = [(pos, 0)]
+    path = [(y, x, 0)]
     last = None
     while True:
-        y, x = pos
         if data[y][x] == "E":
-            return sorted(path)
-        for pos2 in ((y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)):
-            y, x = pos2
-            if data[y][x] != "#" and pos2 != last:
-                path.append((pos2, len(path)))
-                last, pos = pos, pos2
+            return array("i", chain.from_iterable(sorted(path)))
+        pos = y, x
+        for y, x in ((y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)):
+            if data[y][x] != "#" and (y, x) != last:
+                path.append((y, x, len(path)))
+                last = pos
                 break
         else:
             return None

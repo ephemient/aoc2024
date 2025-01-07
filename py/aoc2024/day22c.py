@@ -18,8 +18,9 @@ def _step(num: cython.uint) -> cython.uint:
 @cython.nogil
 def part1(data: cython.uint[:]) -> cython.ulong:
     i: cython.int
+    n: cython.int = len(data)
     result: cython.ulong = 0
-    for i in prange(data.shape[0], nogil=True):
+    for i in prange(n):
         j: cython.int
         secret: cython.uint = data[i]
         for j in range(2000):
@@ -34,8 +35,9 @@ def part2(data: cython.uint[:]) -> cython.uint:
     i: cython.int
     acc: cython.uint[19 * 19 * 19 * 19]
     memset(cython.address(acc[0]), 0, cython.sizeof(acc))
+    n: cython.int = len(data)
     result: cython.uint = 0
-    for i in prange(data.shape[0]):
+    for i in prange(n):
         j: cython.int
         secret: cython.uint = data[i]
         seen: cython.bint[19 * 19 * 19 * 19]

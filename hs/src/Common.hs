@@ -1,5 +1,6 @@
 module Common (crt, egcd, readEntire, readMany, readSome) where
 
+import Control.Exception (assert)
 import Data.Bifunctor (first)
 import Data.Char (isSpace)
 import Data.List.NonEmpty (NonEmpty ((:|)))
@@ -13,7 +14,7 @@ import Data.Text.Read (Reader)
 --            r3 `mod` q1 == r1 && q3 `mod` q1 == 0 &&
 --            r3 `mod` q2 == r2 && q3 `mod` q2 == 0
 crt :: (Integral a) => (a, a) -> (a, a) -> (a, a)
-crt (r1, q1) (r2, q2) = (r3 `mod` q3, q3)
+crt (r1, q1) (r2, q2) = assert (z == 0) (r3 `mod` q3, q3)
   where
     q3 = lcm q1 q2
     -- r3 * q2 == r1 * q2 (mod q3)
@@ -22,7 +23,7 @@ crt (r1, q1) (r2, q2) = (r3 `mod` q3, q3)
     (t, _, g) = egcd (q1 + q2) q3
     -- t * (q1 + q2) == g (mod q3)
     -- r3 = (r1 * q2 + r2 * q1) * t / g (mod q3)
-    (r3, 0) = ((r1 * q2 + r2 * q1) * t) `divMod` g
+    (r3, z) = ((r1 * q2 + r2 * q1) * t) `divMod` g
 
 -- | Extended GCD.
 --

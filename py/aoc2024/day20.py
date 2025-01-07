@@ -25,19 +25,26 @@ SAMPLE_INPUT = """
 
 def _getpath(data: str) -> list[tuple[tuple[int, int], int]]:
     data = data.splitlines()
-    stack = [
-        ((y, x), {(y, x): 0})
+    pos = next(
+        (y, x)
         for y, line in enumerate(data)
         for x, char in enumerate(line)
         if char == "S"
-    ]
+    )
+    path = [(pos, 0)]
+    last = None
     while True:
-        (y, x), path = stack.pop()
+        y, x = pos
         if data[y][x] == "E":
-            return sorted(path.items())
-        for y, x in ((y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)):
-            if data[y][x] != "#" and (y, x) not in path:
-                stack.append(((y, x), path | {(y, x): len(path)}))
+            return sorted(path)
+        for pos2 in ((y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)):
+            y, x = pos2
+            if data[y][x] != "#" and pos2 != last:
+                path.append((pos2, len(path)))
+                last, pos = pos, pos2
+                break
+        else:
+            return None
 
 
 def part1(data: str, time: int = 100) -> int:

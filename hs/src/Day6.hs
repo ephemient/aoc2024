@@ -5,9 +5,8 @@ module Day6 (part1, part2) where
 
 import Control.Monad (ap)
 import Control.Parallel.Strategies (parMap, rseq)
-import Data.Array.Unboxed (UArray, inRange, listArray, range, (!))
 import Data.Containers.ListUtils (nubOrd)
-import Data.Ix (Ix)
+import Data.Ix (Ix, inRange)
 import Data.Maybe (catMaybes, isJust)
 import Data.Semigroup (Max (Max))
 import Data.Set (Set)
@@ -46,18 +45,16 @@ visited bounds isBlock start = catMaybes $ takeWhile isJust $ iterate (>>= step)
         pos' = (y + dy, x + dx)
 
 part1 :: Text -> Int
-part1 input = length $ nubOrd $ map fst $ start >>= visited bounds (blocks' !)
+part1 input = length $ nubOrd $ map fst $ start >>= visited bounds (`Set.member` blocks)
   where
     (bounds, blocks, start) = parse input
-    blocks' = listArray @UArray bounds $ (`Set.member` blocks) <$> range bounds
 
 part2 :: Text -> Int
 part2 input =
-  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (nubOrd . map fst . visited bounds (blocks' !))
+  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (nubOrd . map fst . visited bounds (`Set.member` blocks))
   where
     (bounds, blocks, start) = parse input
-    blocks' = listArray @UArray bounds $ (`Set.member` blocks) <$> range bounds
-    isBlock block pos = pos == block || blocks' ! pos
+    isBlock block pos = pos == block || pos `Set.member` blocks
     isLoop start' block = isLoop' 0 Set.empty $ visited bounds (isBlock block) start'
     isLoop' _ _ [] = False
     isLoop' (-1) seen ((_, (dy, _)) : rest) = isLoop' dy seen rest

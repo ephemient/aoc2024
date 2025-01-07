@@ -1,3 +1,7 @@
+---
+title: Hyperfine
+---
+
 ### Day 1
 
 {% include_relative hyperfine/1.md %}

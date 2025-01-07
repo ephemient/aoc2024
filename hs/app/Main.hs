@@ -68,7 +68,7 @@ main = do
   run 8 print [Day8.part1, Day8.part2]
   run 9 print [Day9.part1, Day9.part2]
   run 10 print [Day10.part1, Day10.part2]
-  run 11 (either fail print) [Day11.part1, Day11.part2]
+  run 11 (>>= print) [Day11.part1, Day11.part2]
   run 12 print [Day12.part1, Day12.part2]
   run 13 (either (fail . errorBundlePretty) print) [Day13.part1, Day13.part2]
   run 14 (either (fail . errorBundlePretty) print) [Day14.part1, Day14.part2]

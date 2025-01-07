@@ -1,9 +1,5 @@
 # cython: boundscheck=False, wraparound=False, initializedcheck=False, embedsignature=True
 # ruff: noqa: F821
-"""
-Day 22: Monkey Market
-"""
-
 import cython
 from cython.parallel import prange
 from cython.cimports.libc.string import memset

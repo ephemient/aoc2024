@@ -90,9 +90,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
       - run: chmod +x aoc2024-hs-9.10/aoc2024 aoc2024-hs-9.12/aoc2024
-      - run: aoc2024-hs-9.10/aoc2024
+      - run: aoc2024-hs-9.10/aoc2024 +RTS -s
         env:
           AOC2024_DATADIR: inputs
-      - run: aoc2024-hs-9.12/aoc2024
+      - run: aoc2024-hs-9.12/aoc2024 +RTS -s
         env:
           AOC2024_DATADIR: inputs

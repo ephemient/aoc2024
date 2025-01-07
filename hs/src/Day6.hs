@@ -6,35 +6,38 @@
 -- Description:    <https://adventofcode.com/2024/day/6 Day 6: Guard Gallivant>
 module Day6 (part1, part2) where
 
-import Control.Monad (ap)
+import Control.Monad (ap, foldM)
+import Control.Monad.ST (ST, runST)
 import Control.Parallel.Strategies (parMap, rseq)
-import Data.Ix (Ix, inRange)
+import Data.Array.IArray ((!))
+import Data.Array.MArray (newArray, writeArray)
+import Data.Array.ST (STUArray)
+import Data.Array.Unboxed (UArray)
+import Data.Array.Unsafe (unsafeFreeze)
+import Data.Functor (($>))
+import Data.Ix (inRange)
 import Data.Maybe (catMaybes, isJust)
-import Data.Semigroup (Max (Max))
-import Data.Set (Set)
-import Data.Set qualified as Set (empty, fromList, insert, member, singleton, size, toList)
+import Data.Set qualified as Set (empty, fromList, insert, member, size, toList)
 import Data.Text (Text)
-import Data.Text qualified as T (lines, unpack)
+import Data.Text qualified as T (length, lines, unpack)
 
-parse :: (Enum i, Ix i, Num i, Ord i) => Text -> (((i, i), (i, i)), Set (i, i), [((i, i), (i, i))])
+parse :: Text -> (((Int, Int), (Int, Int)), UArray (Int, Int) Bool, [((Int, Int), (Int, Int))])
 parse input = (bounds, blocks, start)
   where
-    (Max maxY, Max maxX, (blocks, start)) =
-      foldl' (<>) (Max 0, Max 0, mempty) $
-        [ ( Max y,
-            Max x,
-            case char of
-              '^' -> (mempty, [((y, x), (-1, 0))])
-              '<' -> (mempty, [((y, x), (0, -1))])
-              '>' -> (mempty, [((y, x), (0, 1))])
-              'v' -> (mempty, [((y, x), (1, 0))])
-              '#' -> (Set.singleton (y, x), mempty)
-              _ -> mempty
-          )
-        | (y, line) <- zip [0 ..] $ T.lines input,
-          (x, char) <- zip [0 ..] $ T.unpack line
-        ]
-    bounds = ((0, 0), (maxY, maxX))
+    input' = T.lines input
+    height = length input'
+    width = foldl' max 0 $ T.length <$> input'
+    bounds = ((0, 0), (height - 1, width - 1))
+    (start, blocks) = runST $ do
+      blocks' <- newArray bounds False :: ST s (STUArray s _ _)
+      let go k (y, line) = foldM (go' y) k $ zip [0 ..] $ T.unpack line
+          go' y k (x, '#') = writeArray blocks' (y, x) True $> k
+          go' y k (x, '^') = pure $ ((y, x), (-1, 0)) : k
+          go' y k (x, '<') = pure $ ((y, x), (0, -1)) : k
+          go' y k (x, '>') = pure $ ((y, x), (0, 1)) : k
+          go' y k (x, 'v') = pure $ ((y, x), (1, 0)) : k
+          go' _ k _ = pure k
+      (,) <$> foldM go [] (zip [0 ..] input') <*> unsafeFreeze blocks'
 
 visited :: ((Int, Int), (Int, Int)) -> ((Int, Int) -> Bool) -> ((Int, Int), (Int, Int)) -> [((Int, Int), (Int, Int))]
 visited bounds isBlock start = catMaybes $ takeWhile isJust $ iterate (>>= step) $ Just start
@@ -47,16 +50,16 @@ visited bounds isBlock start = catMaybes $ takeWhile isJust $ iterate (>>= step)
         pos' = (y + dy, x + dx)
 
 part1 :: Text -> Int
-part1 input = Set.size $ Set.fromList $ map fst $ start >>= visited bounds (`Set.member` blocks)
+part1 input = Set.size $ Set.fromList $ map fst $ start >>= visited bounds (blocks !)
   where
     (bounds, blocks, start) = parse input
 
 part2 :: Text -> Int
 part2 input =
-  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (Set.toList . Set.fromList . map fst . visited bounds (`Set.member` blocks))
+  length $ filter id $ start >>= (parMap rseq . isLoop) `ap` (Set.toList . Set.fromList . map fst . visited bounds (blocks !))
   where
     (bounds, blocks, start) = parse input
-    isBlock block pos = pos == block || pos `Set.member` blocks
+    isBlock block pos = pos == block || blocks ! pos
     isLoop start' block = isLoop' 0 Set.empty $ visited bounds (isBlock block) start'
     isLoop' _ _ [] = False
     isLoop' (-1) seen ((_, (dy, _)) : rest) = isLoop' dy seen rest

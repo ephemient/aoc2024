@@ -1,4 +1,4 @@
-theme: jekyll-theme-minimal
+theme: minima
 plugins:
   - jekyll-mentions
   - jemoji

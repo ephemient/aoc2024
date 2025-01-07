@@ -16,3 +16,7 @@
 ## Rust
 
 [Criterion](criterion/index.html)
+
+## All
+
+[Hyperfine](hyperfine.html)

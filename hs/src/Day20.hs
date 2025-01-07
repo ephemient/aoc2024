@@ -4,9 +4,8 @@
 module Day20 (solve) where
 
 import Control.Parallel.Strategies (parMap, rseq)
-import Data.List (tails)
-import Data.Map qualified as Map (empty, member, size, toList)
-import Data.Map.Strict qualified as Map (insert)
+import Data.List (sort, tails)
+import Data.Maybe (listToMaybe)
 import Data.Text (Text)
 import Data.Text qualified as T (index, length, lines, unpack)
 import Data.Vector qualified as V (fromList, length, (!))
@@ -21,17 +20,20 @@ solve cheats time input =
       ]
     | y0 <- [0 .. V.length grid - 1],
       (x0, 'S') <- zip [0 ..] . T.unpack $ grid V.! y0,
-      ((y1, x1), i) : rest <- paths Map.empty (y0, x0) >>= tails . Map.toList
+      ((y1, x1), i) : rest <- take 1 (paths 0 [] (y0, x0)) >>= tails . sort
     ]
   where
     grid = V.fromList $ T.lines input
-    paths path pos@(y, x)
+    paths n path pos@(y, x)
       | y < 0 || V.length grid <= y = []
       | x < 0 || T.length line <= x = []
       | '#' <- line `T.index` x = []
       | 'E' <- line `T.index` x = [path']
-      | pos `Map.member` path = []
-      | otherwise = concatMap (paths path') [(y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)]
+      | otherwise =
+          filter
+            (maybe (const True) ((/=) . fst) $ listToMaybe path)
+            [(y - 1, x), (y, x - 1), (y, x + 1), (y + 1, x)]
+            >>= paths (n + 1) path'
       where
         line = grid V.! y
-        path' = Map.insert pos (Map.size path) path
+        path' = (pos, n) : path

@@ -3,7 +3,7 @@
 
 ## Haskell
 
-[Criterion](aoc2024-bench.html)
+[Criterion (GHC 9.10)](aoc2024-bench.html) [(GHC 9.12)](aoc2024-bench-9.12.html)
 
 ## Kotlin
 

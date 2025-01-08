@@ -1,62 +1,80 @@
+use std::cmp::min;
+
+fn parse(data: &str) -> Vec<(usize, (u8, u8))> {
+    let mut iter = data
+        .bytes()
+        .filter_map(|b| {
+            if b.is_ascii_digit() {
+                Some(b - b'0')
+            } else {
+                None
+            }
+        })
+        .chain([0])
+        .fuse();
+    std::iter::from_fn(move || iter.next().zip(iter.next()))
+        .scan(0, |acc, (used, free)| {
+            let offset = *acc;
+            *acc += (used + free) as usize;
+            Some((offset, (used, free)))
+        })
+        .collect()
+}
+
 fn tri_range(offset: u64, size: u64) -> u64 {
     (2 * offset + size - 1) * size / 2
 }
 
 pub fn part1(data: &str) -> u64 {
-    let mut sizes = data
-        .chars()
-        .filter_map(|c| c.to_digit(10))
-        .collect::<Vec<_>>();
-    let (mut total, mut offset) = (0, 0);
-    for i in 0..sizes.len() {
-        let size = sizes[i];
-        if i % 2 == 0 {
-            total += i as u64 / 2 * tri_range(offset, size.into());
-            offset += size as u64;
-        } else {
-            let mut free_size = size;
-            for (j, size) in sizes.iter_mut().enumerate().skip(i + 1).step_by(2).rev() {
-                if free_size == 0 {
+    let mut data = parse(data);
+    (0..data.len())
+        .scan(data.len(), |end, id| {
+            if id >= *end {
+                return None;
+            }
+            let (mut offset, (len, mut free)) = data[id];
+            let mut sum = id as u64 * tri_range(offset as u64, len as u64);
+            offset += len as usize;
+            while free > 0 && id + 1 < *end {
+                let id = *end - 1;
+                let (_, (used2, _)) = data.get_mut(id).unwrap();
+                let moved = min(free, *used2);
+                sum += id as u64 * tri_range(offset as u64, moved as u64);
+                offset += moved as usize;
+                free -= moved;
+                *used2 -= moved;
+                if *used2 > 0 {
                     break;
                 }
-                let used_size = free_size.min(*size);
-                total += j as u64 / 2 * tri_range(offset, used_size.into());
-                offset += used_size as u64;
-                free_size -= used_size;
-                *size -= used_size;
+                *end = id;
             }
-        }
-    }
-    total
+            Some(sum)
+        })
+        .sum()
 }
 
 pub fn part2(data: &str) -> u64 {
-    let mut chunks = data
-        .chars()
-        .filter_map(|c| c.to_digit(10))
-        .scan(0, |acc, size| {
-            let offset = *acc;
-            *acc = offset + size;
-            Some((offset, size))
-        })
-        .collect::<Vec<_>>();
-    (0..chunks.len())
-        .step_by(2)
+    let mut data = parse(data);
+    (0..data.len())
         .rev()
-        .map(|i| {
-            let (mut offset, size) = chunks[i];
-            if let Some((free_offset, free_size)) = chunks
-                .iter_mut()
-                .take(i)
-                .skip(1)
-                .step_by(2)
-                .find(|(_, free_size)| size <= *free_size)
-            {
-                offset = *free_offset;
-                *free_offset += size;
-                *free_size -= size;
+        .scan([0; 10], |last_i, id| {
+            let (mut offset, (used, _)) = data[id];
+            let mut i = last_i[used as usize];
+            while i < id {
+                let (_, (_, free)) = data.get_mut(i).unwrap();
+                if used <= *free {
+                    let free2 = *free;
+                    *free -= used;
+                    offset = data[i + 1].0 - free2 as usize;
+                    last_i[used as usize..].fill(i);
+                    break;
+                }
+                i += 1;
             }
-            i as u64 / 2 * tri_range(offset.into(), size.into())
+            if i != last_i[used as usize] {
+                last_i[used as usize..].fill(i);
+            }
+            Some(id as u64 * tri_range(offset as u64, used as u64))
         })
         .sum()
 }

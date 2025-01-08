@@ -1,3 +1,5 @@
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+
 fn count(keys: &[&str], target: &str) -> usize {
     let mut counts = Vec::with_capacity(target.len());
     (1..=target.len()).fold(1, |n, i| {
@@ -21,15 +23,16 @@ pub fn solve(data: &str) -> Option<(usize, usize)> {
     if keys.iter().any(|key| key.is_empty()) {
         return None;
     }
-    Some(
-        iter.filter_map(|target| {
+    iter.collect::<Vec<_>>()
+        .par_iter()
+        .map(|target| {
             if target.is_empty() {
-                return None;
+                return (0, 0);
             }
-            Some(count(&keys[..], target)).filter(|n| *n > 0)
+            let count = count(&keys[..], target);
+            (if count != 0 { 1 } else { 0 }, count)
         })
-        .fold((0, 0), |(part1, part2), n| (part1 + 1, part2 + n)),
-    )
+        .reduce_with(|(a, b), (c, d)| (a + c, b + d))
 }
 
 #[cfg(test)]

@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use itertools::Itertools;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 fn parse(data: &str) -> BTreeMap<&str, BTreeSet<&str>> {
     let mut graph = BTreeMap::<_, BTreeSet<_>>::new();
@@ -51,10 +52,11 @@ pub fn part2(data: &str) -> String {
             .max_by_key(BTreeSet::len)
             .unwrap_or(used)
     }
-    max_complete(&graph, BTreeSet::new(), graph.keys().copied().collect())
-        .iter()
-        .sorted()
-        .join(",")
+    graph
+        .par_iter()
+        .map(|(a, remaining)| max_complete(&graph, [*a].into(), remaining.clone()))
+        .max_by_key(BTreeSet::len)
+        .map_or_else(String::new, |set| set.into_iter().sorted().join(","))
 }
 
 #[cfg(test)]

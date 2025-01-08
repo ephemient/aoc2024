@@ -3,54 +3,72 @@
 -- Description:    <https://adventofcode.com/2024/day/9 Day 9: Disk Defragmenter>
 module Day9 (part1, part2) where
 
-import Control.Monad (ap)
+import Control.Monad (ap, foldM, when)
 import Control.Monad.ST (runST)
-import Data.Bits (clearBit)
 import Data.Char (digitToInt, isDigit)
+import Data.List (scanl')
+import Data.List.Split (chunksOf)
+import Data.Maybe (fromMaybe, listToMaybe)
 import Data.Text (Text)
 import Data.Text qualified as T (unpack)
-import Data.Vector.Unboxed (Vector)
-import Data.Vector.Unboxed qualified as V (fromList, thaw)
-import Data.Vector.Unboxed.Mutable qualified as MV (length, read, write)
+import Data.Vector (Vector)
+import Data.Vector qualified as V (fromList, thaw)
+import Data.Vector.Mutable qualified as MV (length, read, replicate, write)
 
-parse :: Text -> Vector (Int, Int)
-parse = V.fromList . (zip `ap` scanl (+) 0) . map digitToInt . filter isDigit . T.unpack
+parse :: Text -> Vector (Int, (Int, Int))
+parse input =
+  V.fromList $
+    flip zip `ap` scanl' (flip $ (+) . uncurry (+)) 0 $
+      [ (size, fromMaybe 0 $ listToMaybe free)
+      | size : free <- chunksOf 2 $ map digitToInt $ filter isDigit $ T.unpack input
+      ]
 
 triRange :: (Integral a) => a -> a -> a
 triRange offset size = (2 * offset + size - 1) * size `div` 2
 
 part1 :: Text -> Int
 part1 input = runST $ do
-  chunks <- V.thaw $ parse input
+  files <- V.thaw $ parse input
   let go i j k
-        | i > j = pure k
-        | even i = do
-            (size, offset) <- MV.read chunks i
-            go (i + 1) j $! k + i `div` 2 * triRange offset size
-        | otherwise = do
-            (freeSize, freeOffset) <- MV.read chunks i
-            (size, offset) <- MV.read chunks j
-            let usedSize = min freeSize size
-            MV.write chunks i (freeSize - usedSize, freeOffset + usedSize)
-            MV.write chunks j (size - usedSize, offset)
-            go (if freeSize <= size then i + 1 else i) (if freeSize >= size then j - 2 else j) $!
-              k + j `div` 2 * triRange freeOffset usedSize
-  go 0 (clearBit (MV.length chunks - 1) 0) 0
+        | i < j = do
+            (offset, (used, free)) <- MV.read files i
+            go' (offset + used) free i j $! k + i * triRange offset used
+        | otherwise = pure k
+      go' offset free i j k
+        | free > 0 && i + 1 < j = do
+            (offset', (used', free')) <- MV.read files $ j - 1
+            let moved = min free used'
+            if moved < used'
+              then do
+                MV.write files (j - 1) (offset', (used' - moved, free' + moved))
+                go (i + 1) j $! k + (j - 1) * triRange offset moved
+              else go' (offset + moved) (free - moved) i (j - 1) $! k + (j - 1) * triRange offset moved
+        | otherwise = go (i + 1) j k
+  go 0 (MV.length files) 0
 
 part2 :: Text -> Int
 part2 input = runST $ do
-  chunks <- V.thaw $ parse input
-  let go i j k
-        | i < 0 = pure k
-        | i < j = do
-            (size, offset) <- MV.read chunks i
-            go (i - 2) 1 $! k + i `div` 2 * triRange offset size
-        | otherwise = do
-            (size, _) <- MV.read chunks i
-            (freeSize, freeOffset) <- MV.read chunks j
-            if size <= freeSize
+  files <- V.thaw $ parse input
+  starts <- MV.replicate 10 0
+  let go k i = do
+        (offset, (used, _)) <- MV.read files i
+        (j, offset') <- fromMaybe (i, offset) <$> (MV.read starts used >>= go' used i)
+        go'' used j
+        pure $! k + i * triRange offset' used
+      go' used i j
+        | j < i = do
+            (offset, (used', free)) <- MV.read files j
+            if used <= free
               then do
-                MV.write chunks j (freeSize - size, freeOffset + size)
-                go (i - 2) 1 $! k + i `div` 2 * triRange freeOffset size
-              else go i (j + 2) k
-  go (clearBit (MV.length chunks - 1) 0) 1 0
+                MV.write files j (offset, (used', free - used))
+                Just . (j,) . subtract free . fst <$> MV.read files (j + 1)
+              else go' used i $ j + 1
+        | otherwise = pure Nothing
+      go'' used i
+        | used < MV.length starts = do
+            j <- MV.read starts used
+            when (j < i) $ do
+              MV.write starts used i
+              go'' (used + 1) i
+        | otherwise = pure ()
+  foldM go 0 [MV.length files - 1, MV.length files - 2 .. 0]

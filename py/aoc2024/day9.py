@@ -10,6 +10,9 @@ SAMPLE_INPUT = """
 
 
 def _rangesum(start: int, size: int) -> int:
+    """
+    _rangesum(start, size) == sum(range(start, start + size))
+    """
     return (2 * start + size - 1) * size // 2
 
 

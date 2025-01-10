@@ -16,8 +16,12 @@ import kotlinx.coroutines.completeWith
 actual fun <T> runBlockingBenchmark(block: suspend CoroutineScope.() -> T): T {
     val deferred = CompletableContinuation<T>(Dispatchers.Unconfined)
     block.startCoroutine(CoroutineScope(deferred.context), deferred)
-    @OptIn(ExperimentalCoroutinesApi::class)
-    return deferred.getCompleted()
+    try {
+        @OptIn(ExperimentalCoroutinesApi::class)
+        return deferred.getCompleted()
+    } finally {
+        deferred.cancel()
+    }
 }
 
 @OptIn(InternalForInheritanceCoroutinesApi::class)

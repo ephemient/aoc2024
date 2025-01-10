@@ -1,4 +1,4 @@
-use std::iter;
+use std::iter::successors;
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use itertools::Itertools;
@@ -14,7 +14,7 @@ pub fn part1(data: &str) -> u64 {
     data.lines()
         .collect::<Vec<_>>()
         .par_iter()
-        .filter_map(|line| iter::successors(line.parse().ok(), |num| Some(step(*num))).nth(2000))
+        .filter_map(|line| successors(line.parse().ok(), |num| Some(step(*num))).nth(2000))
         .map(Into::<u64>::into)
         .sum()
 }
@@ -26,7 +26,7 @@ pub fn part2(data: &str) -> u32 {
         .par_iter()
         .filter_map(|line| {
             let mut seen = [false; 19 * 19 * 19 * 19];
-            iter::successors(line.parse().ok(), |num| Some(step(*num)))
+            successors(line.parse().ok(), |num| Some(step(*num)))
                 .take(2001)
                 .map(|num| num % 10)
                 .tuple_windows()

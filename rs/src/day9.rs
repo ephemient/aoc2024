@@ -1,4 +1,4 @@
-use std::cmp::min;
+use std::iter;
 
 fn parse(data: &str) -> Vec<(usize, (u8, u8))> {
     let mut iter = data
@@ -12,7 +12,7 @@ fn parse(data: &str) -> Vec<(usize, (u8, u8))> {
         })
         .chain([0])
         .fuse();
-    std::iter::from_fn(move || iter.next().zip(iter.next()))
+    iter::from_fn(move || iter.next().zip(iter.next()))
         .scan(0, |acc, (used, free)| {
             let offset = *acc;
             *acc += (used + free) as usize;
@@ -38,7 +38,7 @@ pub fn part1(data: &str) -> u64 {
             while free > 0 && id + 1 < *end {
                 let id = *end - 1;
                 let (_, (used2, _)) = data.get_mut(id).unwrap();
-                let moved = min(free, *used2);
+                let moved = free.min(*used2);
                 sum += id as u64 * tri_range(offset as u64, moved as u64);
                 offset += moved as usize;
                 free -= moved;

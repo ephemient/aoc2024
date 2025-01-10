@@ -1,11 +1,10 @@
 use std::collections::BTreeSet;
-use std::iter::once;
 
 use itertools::Itertools;
 
 fn solve<I>(data: &str, multiples: I) -> usize
 where
-    I: Clone + Iterator<Item = isize>,
+    I: Clone + IntoIterator<Item = isize>,
 {
     let (mut height, mut width) = (0, 0);
     data.lines()
@@ -34,7 +33,7 @@ where
                     .filter(move |point1| point0 != *point1)
                     .flat_map(|(y1, x1)| {
                         let (dy, dx) = (*y1 as isize - *y0 as isize, *x1 as isize - *x0 as isize);
-                        multiples.clone().map_while(move |i| {
+                        multiples.clone().into_iter().map_while(move |i| {
                             Some((
                                 y1.wrapping_add_signed(i * dy),
                                 x1.wrapping_add_signed(i * dx),
@@ -49,7 +48,7 @@ where
 }
 
 pub fn part1(data: &str) -> usize {
-    solve(data, once(1))
+    solve(data, [1])
 }
 
 pub fn part2(data: &str) -> usize {

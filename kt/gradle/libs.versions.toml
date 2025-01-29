@@ -6,7 +6,7 @@ kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
 kotlinx-coroutines = "1.10.1"
 kotlinpoet = "2.0.0"
-ksp = "2.1.0-1.0.29"
+ksp = "2.1.10-1.0.29"
 native-image = "0.10.4"
 okio = "3.10.2"
 

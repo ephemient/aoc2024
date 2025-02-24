@@ -1,6 +1,6 @@
 [versions]
 asm = "9.7.1"
-detekt = "1.23.7"
+detekt = "1.23.8"
 junit-jupiter = "5.11.4"
 kotlin = "2.1.0"
 kotlinx-benchmark = "0.4.13"
